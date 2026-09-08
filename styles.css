@@ -1,0 +1,1948 @@
+/* ============================================================
+   Питч-сайт — светлая тёплая база + жидкое стекло, акценты Китая.
+   Тема: кремовая бумага, панели матового стекла (backdrop-filter),
+   акценты 中国红 (--red) и золото (--gold): кнопки, номера, теги, активные состояния.
+   Тёмная поверхность осталась одна — первый экран: поверх фото лежит заголовок.
+   Паттерн 回纹 — SVG data-URI (разделители, углы hero, фон заглушек).
+   Системные шрифты, без внешних ресурсов.
+   ============================================================ */
+
+:root {
+  /* Тёмная база — только для первого экрана (оверлей над фоновым фото) */
+  --navy: #0f1e30;
+
+  /* Тёплая светлая база */
+  --paper: #f3f0e8;       /* кремовый фон страницы и чётных глав */
+  --paper-2: #faf8f2;     /* светлая глава (.section--alt) */
+  --ink: #1f1b14;         /* тёплый почти-чёрный: основной текст */
+  --ink-strong: #171308;  /* заголовки */
+  --muted: #5e5648;       /* тёплый таупе: приглушённый текст */
+  --line: rgba(38, 30, 16, 0.13);
+
+  --red: #C8102E;
+  --red-deep: #a50d26;
+  /* Золото-акцент читается как текст на светлом (цифры, номера, активные состояния);
+     светлое золото 回纹 осталось декором и в текст не идёт. */
+  --gold: #7e6218;
+  --gold-glint: #D4A64A;
+  --gold-soft: rgba(126, 98, 24, 0.34);
+  --gold-tint: rgba(126, 98, 24, 0.09);
+  --red-tint: rgba(200, 16, 46, 0.10);
+  --red-shadow: 0 8px 20px -10px rgba(200, 16, 46, 0.6);
+  --accent: var(--red);
+
+  --on-dark: #eef1f5;
+  --on-dark-muted: #b9c3cf;
+  --line-dark: rgba(255, 255, 255, 0.14);
+
+  /* Семантические токены светлой темы; тёмный первый экран переопределяет их на себе */
+  --fg: var(--ink);
+  --fg-muted: var(--muted);
+  --heading: var(--ink-strong);
+  --rule: var(--line);
+  --surface: #fdfbf6;      /* непрозрачная поверхность: к ней сводится стекло */
+  --surface-soft: #f9f6ef;
+  --surface-hover: var(--gold-soft);
+  --num: var(--gold);
+  --wm-color: rgba(126, 98, 24, 0.07);
+  --fret-color: rgba(126, 98, 24, 0.35);
+
+  /* Жидкое стекло: две градации — плотная (.glass) и мягкая (.glass-soft).
+     Полупрозрачная тёплая подложка + размытие с насыщением + тонкая тёплая граница
+     + мягкая многослойная тень + внутренний блик сверху.
+     Без прозрачности те же поверхности сводятся к --surface / --surface-soft:
+     запасной путь @supports, режим prefers-reduced-transparency и печать. */
+  --glass-bg: rgba(255, 253, 248, 0.62);
+  --glass-bg-soft: rgba(255, 253, 248, 0.42);
+  --glass-border: rgba(38, 30, 16, 0.09);
+  --glass-border-strong: rgba(38, 30, 16, 0.14);
+  --glass-blur: blur(20px) saturate(140%);
+  --glass-blur-soft: blur(12px) saturate(125%);
+  --glass-shadow: 0 1px 2px rgba(38, 30, 16, 0.04), 0 12px 34px -14px rgba(120, 78, 56, 0.18);
+  --glass-shadow-soft: 0 1px 2px rgba(38, 30, 16, 0.03), 0 8px 22px -12px rgba(120, 78, 56, 0.14);
+  --glass-shadow-float: 0 2px 4px rgba(38, 30, 16, 0.05), 0 22px 56px -28px rgba(90, 58, 40, 0.34);
+  --glass-glint: inset 0 1px 0 rgba(255, 255, 255, 0.78);
+  /* Плотная плашка поверх фотографии: подпись обязана читаться над любым кадром */
+  --glass-chip: rgba(255, 253, 248, 0.88);
+  /* Самая плотная градация — флагманский формат: выделяется стеклом, а не заливкой.
+     Пара «прозрачный / непрозрачный» объявлена здесь один раз, чтобы запасные режимы
+     не повторяли литералы. */
+  --glass-strong: linear-gradient(160deg, rgba(255, 253, 248, 0.90), rgba(250, 245, 233, 0.72));
+  --surface-strong: linear-gradient(160deg, var(--surface), var(--surface-soft));
+
+  /* 回纹: квадратный тайл 24×24 (фон) и полоса 24×12 (разделители), золото */
+  --fret: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M2 22V2h20v20H9V9h7v7h-4' fill='none' stroke='%23D4A64A' stroke-width='1.1'/%3E%3C/svg%3E");
+  --fret-strip: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='12' viewBox='0 0 24 12'%3E%3Cpath d='M1 11V1h15v10H6V5h6v3M19 1v10' fill='none' stroke='%23D4A64A' stroke-width='1.1'/%3E%3C/svg%3E");
+
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  --font-display: Georgia, "Times New Roman", "Songti SC", "Noto Serif SC", SimSun, serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+
+  --container: 1120px;
+  --gutter: 24px;
+  --section-y: 112px;
+  --block-gap: 56px; /* единый отступ между section-head и содержимым секции */
+  --sub-gap: 96px;   /* отступ перед подглавой: главы длинные, подглавы должны читаться раздельно */
+  --header-h: 64px;       /* высота содержимого шапки = .header-inner */
+  --header-border: 1px;   /* нижняя граница шапки: входит в липкий бокс, значит и в отступ якоря */
+  --radius: 8px;          /* контролы и мелкие поверхности */
+  --radius-panel: 12px;   /* панели: карточки, полосы, рамки фото */
+  /* Нижняя ступень шкалы служебного текста: сноски, подписи фото и метрик,
+     подсказка прокрутки, теги и надзаголовки. Ниже 14px не опускается ничего —
+     на телефоне мелкие подписи читались с прищуром. */
+  --fs-micro: 14px;
+  /* Тень липкой колонки сравнительной таблицы: край видно, пока строку прокручивают */
+  --sticky-shadow: 8px 0 14px -10px rgba(38, 30, 16, 0.45);
+}
+
+/* Единственная тёмная поверхность сайта — первый экран: тёмный оверлей над фоновым фото,
+   поверх него заголовок. Те же компоненты, другие токены; золото здесь светлое,
+   потому что читается на тёмном, а не на бумаге. */
+.hero {
+  --fg: var(--on-dark);
+  --fg-muted: var(--on-dark-muted);
+  --heading: #ffffff;
+  --rule: var(--line-dark);
+  --surface-hover: rgba(212, 166, 74, 0.4);
+  --num: var(--gold-glint);
+  --wm-color: rgba(212, 166, 74, 0.07);
+  --fret-color: rgba(212, 166, 74, 0.55);
+  color: var(--fg);
+}
+
+/* ---------- Жидкое стекло: две градации ----------
+ * .glass — плотная панель (карточки, полосы-призыва, шапка, рамки фото);
+ * .glass-soft — мягкая (плитки, контролы, второстепенные поверхности).
+ * Компоненты подключаются к градации перечислением в этих же группах:
+ * новый компонент дописывается в список, а не заводит свой рецепт стекла. */
+.glass,
+.card, .callout, .weekly, .case-story, .calc__sheet, .compare-wrap, .cta-bar, .site-header,
+.checklist li, .numbered li, .milestone, .photo, .shot img, .real img, .qr img {
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow), var(--glass-glint);
+}
+
+.glass-soft,
+.tile, .tabs__panel, .platform-list li, .copy-btn, .lang-toggle, .carousel__btn,
+.disclosure-toggle, .faq__icon, .ticker {
+  background: var(--glass-bg-soft);
+  -webkit-backdrop-filter: var(--glass-blur-soft);
+  backdrop-filter: var(--glass-blur-soft);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow-soft), var(--glass-glint);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { transition: none !important; animation: none !important; }
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--ink);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 { margin: 0; font-weight: 600; line-height: 1.2; text-wrap: balance; }
+p { margin: 0; }
+ul, ol, dl, dd { margin: 0; padding: 0; }
+li { list-style: none; }
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; height: auto; display: block; }
+[hidden] { display: none !important; }
+
+/* Единый focus-ring для клавиатуры: золото-акцент, светлое на тёмном hero (через --num) */
+:focus-visible { outline: 2px solid var(--num); outline-offset: 2px; }
+
+/* Китайская типографика: межстрочный ≥1.7 для абзацев и списков */
+html[data-lang="zh"] body { line-height: 1.75; }
+html[data-lang="zh"] .lead { line-height: 1.75; }
+html[data-lang="zh"] .hero-subtitle { line-height: 1.5; }
+
+.container {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+  position: relative;
+  z-index: 1;
+}
+
+/* ---------- Типографика ---------- */
+h2 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(30px, 4vw, 44px);
+  letter-spacing: -0.01em;
+  color: var(--heading);
+}
+h3 { font-size: 20px; color: var(--heading); }
+h4 { font-size: 17px; color: var(--heading); }
+
+.eyebrow {
+  font-size: var(--fs-micro);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.eyebrow::before { content: ""; width: 28px; height: 2px; background: var(--accent); }
+/* Единственное место со светлым золотом — первый экран: он остался тёмным */
+.eyebrow--light { color: var(--gold-glint); }
+.eyebrow--light::before { background: var(--gold-glint); }
+
+.lead {
+  font-size: 19px;
+  line-height: 1.6;
+  color: var(--fg-muted);
+  max-width: 760px;
+  margin-top: 20px;
+}
+
+.footnote {
+  margin-top: 28px;
+  font-size: var(--fs-micro);
+  color: var(--fg-muted);
+}
+
+/* Шапка подглавы: та же связка «eyebrow + заголовок + лид», что у главы, уровнем ниже.
+   Семь глав вместо девятнадцати секций — прежние секции стали подглавами (таск 03). */
+.section-head--sub { margin-top: var(--sub-gap); }
+.section-head--sub h3 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(24px, 2.6vw, 32px);
+  letter-spacing: -0.01em;
+}
+.section-head--sub .lead { font-size: 18px; margin-top: 16px; }
+
+.subhead { margin: 72px 0 28px; }
+h4.subhead { font-size: 20px; }
+
+/* ---------- Шапка ---------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  /* стекло шапки объявлено в группе .glass; здесь — только рамка снизу и цвет текста */
+  border: 0;
+  border-bottom: var(--header-border) solid var(--glass-border-strong);
+  border-radius: 0;
+  color: var(--fg);
+}
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: nowrap; /* шапка обязана оставаться в одну строку и на 390, и на 1440 */
+  height: var(--header-h);
+}
+.brand { display: inline-flex; align-items: center; gap: 12px; flex: 0 1 auto; min-width: 0; overflow: hidden; }
+.brand-mark {
+  display: block;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+}
+.brand-name {
+  font-family: var(--font-display);
+  font-size: 19px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+/* Якоря глав: скрыты ≤768px; активный помечает initAnchorSpy() через aria-current */
+.site-nav { display: flex; align-items: center; gap: 26px; min-width: 0; }
+.site-nav__link {
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  color: var(--fg-muted);
+  white-space: nowrap;
+  padding: 4px 0;
+  border-bottom: 1px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+.site-nav__link:hover { color: var(--heading); }
+.site-nav__link[aria-current="true"] { color: var(--gold); border-bottom-color: var(--gold); }
+
+.header-actions { display: flex; align-items: center; gap: 12px; flex: 0 0 auto; }
+.btn.header-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: auto;          /* перебивает .btn { width: 100% } на узких экранах */
+  min-height: 44px;
+  padding: 10px 20px;
+  font-size: 14px;
+  white-space: nowrap;
+}
+.header-cta__icon { flex: 0 0 auto; }
+.lang-toggle {
+  font: inherit;
+  font-size: var(--fs-micro);
+  letter-spacing: 0.08em;
+  color: var(--fg);
+  padding: 8px 18px;
+  min-height: 44px; /* tap-цель */
+  cursor: pointer;
+  border-radius: 999px;
+  transition: border-color 0.2s, background 0.2s;
+}
+.lang-toggle:hover { border-color: var(--gold-soft); background: var(--gold-tint); }
+
+/* ---------- Секции ---------- */
+.section { padding: var(--section-y) 0; position: relative; overflow: hidden; }
+/* Переход по якорю: заголовок главы встаёт ровно под липким боксом — вместе с его границей */
+section[id], main[id] { scroll-margin-top: calc(var(--header-h) + var(--header-border)); }
+/* Чередование глав держится на двух светлых оттенках бумаги: тёмных заливок больше нет,
+   модификаторы --dark и --dark2 удалены вместе со своими правилами (таск 08). */
+.section--alt { background: var(--paper-2); }
+.section-head { max-width: 820px; }
+
+/* Тонкий разделитель 回纹 сверху каждой секции */
+.section::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 12px;
+  background: var(--fret-strip) repeat-x center top / 24px 12px;
+  opacity: 0.28;
+  pointer-events: none;
+}
+
+/* Водяные иероглифы: мотив бренда, не текст */
+.wm {
+  position: absolute;
+  top: 0.05em;
+  right: -0.06em;
+  z-index: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(120px, 22vw, 280px);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+  color: var(--wm-color);
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ---------- Фото-слоты ----------
+ * Шестнадцать снимков сняты тёмными под белый текст и не перегенерируются: на светлом
+ * они работают акцентными пятнами в стеклянной рамке. Тёмный оверлей снят везде,
+ * кроме первого экрана, где поверх фото лежит заголовок. */
+.photo {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  aspect-ratio: var(--photo-ratio, 16 / 9);
+  border-radius: var(--radius-panel);
+}
+.photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.photo--missing img { display: none; }
+.photo--missing {
+  background:
+    linear-gradient(135deg, var(--red-tint), transparent 45%),
+    linear-gradient(315deg, var(--gold-tint), transparent 50%),
+    linear-gradient(160deg, var(--surface), var(--paper) 60%, var(--paper-2));
+}
+.photo--missing::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--fret) repeat 0 0 / 24px 24px;
+  opacity: 0.28;
+}
+.photo--missing::after {
+  content: attr(data-label) "\A" "assets/photos/" attr(data-slot) ".jpg";
+  white-space: pre-line;
+  position: absolute;
+  left: 16px; right: 16px; bottom: 14px;
+  padding-left: 12px;
+  border-left: 2px solid var(--gold);
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+  color: var(--fg-muted);
+}
+
+/* Полноширинный баннер: фото само по себе, без затемняющего градиента */
+.photo-banner {
+  position: relative;
+  margin-top: var(--block-gap);
+  border-radius: var(--radius-panel);
+  --photo-ratio: 21 / 9;
+}
+.photo-banner + .footnote { margin-top: 20px; }
+/* Подпись живёт не поверх затемнённого кадра, а на плотной стеклянной плашке:
+   кадр остаётся светлым, а текст читается над любой фотографией. */
+.photo__cap {
+  position: absolute;
+  left: 20px; bottom: 18px;
+  z-index: 1;
+  max-width: calc(100% - 40px);
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  background: var(--glass-chip);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-shadow), var(--glass-glint);
+  font-size: var(--fs-micro);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.photo__cap::before { content: ""; display: inline-block; width: 20px; height: 2px; background: var(--accent); margin: 0 12px 4px 0; vertical-align: middle; }
+/* В баннере с подписью метка заглушки уходит в правый угол */
+.photo-banner .photo--missing::after {
+  left: auto; right: 16px;
+  text-align: right;
+  border-left: 0;
+  border-right: 2px solid var(--gold);
+  padding: 0 12px 0 0;
+}
+/* Фото, вписанное в край карточки, не должно рисовать вторую рамку поверх карточкиной.
+   Рамка снята — снимается и размытие: под непрозрачным кадром размывать нечего,
+   а лишний слой backdrop-filter пересчитывался бы на каждом кадре прокрутки. */
+.fmt .photo, .case .photo {
+  border: 0;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  position: relative;
+  overflow: hidden;
+  /* вертикальные отступы едут за высотой окна: на низком экране hero не обрезает H1 и кнопку */
+  padding: clamp(56px, 8vh, 112px) 0 clamp(48px, 7vh, 96px);
+  background: var(--navy);
+}
+.hero-print-brand { display: none; }
+.hero > .photo {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  aspect-ratio: auto;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  /* фон первого экрана — не стекло: размывать под ним нечего, а слой размытия
+     во весь экран пересчитывался бы на каждом кадре прокрутки */
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: var(--navy);
+}
+.hero > .photo::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(15, 30, 48, 0.86) 0%, rgba(15, 30, 48, 0.72) 45%, rgba(15, 30, 48, 0.97) 100%);
+}
+.hero > .photo--missing { background: var(--navy); }
+.hero > .photo--missing::before {
+  background:
+    linear-gradient(180deg, rgba(15, 30, 48, 0.9) 0%, rgba(15, 30, 48, 0.78) 45%, rgba(15, 30, 48, 0.97) 100%),
+    var(--fret) repeat 0 0 / 24px 24px;
+  opacity: 1;
+}
+.hero > .photo--missing::after { color: var(--gold-glint); }
+.hero > .photo--missing::after {
+  left: 24px; right: auto; bottom: 16px;
+  font-size: var(--fs-micro);
+  opacity: 0.85;
+}
+/* Углы 回纹 */
+.hero::before, .hero::after {
+  content: "";
+  position: absolute;
+  width: 96px; height: 96px;
+  background: var(--fret) repeat 0 0 / 24px 24px;
+  opacity: 0.5;
+  z-index: 1;
+  pointer-events: none;
+}
+.hero::before { top: 24px; left: 24px; }
+.hero::after { bottom: 24px; right: 24px; }
+.wm--hero { top: auto; bottom: -0.08em; right: -0.04em; font-size: clamp(140px, 26vw, 360px); color: rgba(212, 166, 74, 0.07); z-index: 1; }
+
+.hero-title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(44px, 8vw, 92px);
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  color: var(--heading);
+  max-width: 900px;
+}
+.hero-subtitle {
+  margin-top: 28px;
+  font-size: clamp(20px, 2.4vw, 26px);
+  line-height: 1.4;
+  color: var(--heading);
+  max-width: 760px;
+}
+.hero-actions { margin-top: 40px; display: flex; flex-wrap: wrap; gap: 14px; }
+.hero-trust {
+  margin-top: 40px;
+  font-size: var(--fs-micro);
+  letter-spacing: 0.06em;
+  color: var(--fg-muted);
+}
+
+/* ---------- Бегущая строка ---------- */
+.ticker {
+  /* стекло — из группы .glass-soft; здесь только форма полосы */
+  border-left: 0;
+  border-right: 0;
+  border-radius: 0;
+  overflow: hidden;
+  padding: 16px 0;
+}
+.ticker__inner { display: flex; width: max-content; }
+.ticker--live .ticker__inner { animation: ticker 40s linear infinite; }
+.ticker:hover .ticker__inner { animation-play-state: paused; }
+.ticker__list { display: flex; align-items: center; flex-shrink: 0; }
+.ticker__list li {
+  display: flex;
+  align-items: center;
+  padding: 0 28px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  white-space: nowrap;
+}
+.ticker__list li::before {
+  content: "";
+  width: 7px; height: 7px;
+  margin-right: 28px;
+  background: var(--gold);
+  transform: rotate(45deg);
+}
+.ticker__list li:nth-child(-n+4) { color: var(--heading); }
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ticker__inner { width: auto; }
+  .ticker__list { flex: 0 1 100%; min-width: 0; flex-wrap: wrap; row-gap: 10px; }
+  .ticker__list--clone { display: none; }
+}
+
+/* ---------- Цифры ---------- */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  margin-top: var(--block-gap);
+  border-top: 1px solid var(--rule);
+}
+.stats .stat { padding: 32px 28px 28px 0; border-right: 1px solid var(--rule); }
+.stats .stat + .stat { padding-left: 28px; }
+.stats .stat:last-child { border-right: none; }
+.stat-num {
+  font-family: var(--font-display);
+  font-size: clamp(46px, 5.8vw, 76px);
+  line-height: 1;
+  color: var(--num);
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.stat-num--ink { color: var(--num); }
+.stat-label { margin-top: 14px; font-size: 15px; color: var(--fg-muted); max-width: 260px; }
+
+/* Цифры в hero — компактные: меньше кегль, короткая подпись (R06) */
+.stats--hero { margin-top: 36px; }
+.stats--hero .stat { padding: 22px 20px 20px 0; }
+.stats--hero .stat + .stat { padding-left: 20px; }
+.stats--hero .stat-num { font-size: clamp(34px, 3.2vw, 46px); }
+.stats--hero .stat-label { margin-top: 8px; font-size: 14px; max-width: 220px; }
+
+.stats--cards {
+  border-top: none;
+  gap: 24px;
+  margin-top: var(--block-gap);
+}
+.stats--cards .stat { border-right: none; padding: 36px 32px; }
+.stats--cards .stat + .stat { padding-left: 32px; }
+.stats--cards .stat-num { font-size: clamp(34px, 3.8vw, 52px); white-space: nowrap; }
+.stats--cards .stat-label { color: var(--fg-muted); }
+
+/* ---------- Кнопки ---------- */
+.btn {
+  display: inline-block;
+  padding: 14px 28px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s;
+}
+.btn--primary { background: var(--accent); color: #fff; box-shadow: var(--red-shadow); }
+.btn--primary:hover { background: var(--red-deep); transform: translateY(-1px); }
+/* Только первый экран: тёмный оверлей — единственный фон, на котором это читается */
+.btn--ghost { border-color: rgba(255, 255, 255, 0.4); color: #fff; }
+.btn--ghost:hover { border-color: var(--gold-glint); color: var(--gold-glint); }
+
+/* ---------- Полоса-призыв (две штуки: после форматов и после разговора о деньгах) ---------- */
+.cta-bar {
+  /* стекло — из группы .glass; здесь только форма полосы */
+  border-left: 0;
+  border-right: 0;
+  border-radius: 0;
+  margin: var(--sub-gap) 0;
+}
+.cta-bar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  padding: 26px var(--gutter); /* .container задаёт горизонтальные поля тем же свойством */
+}
+.cta-bar__text {
+  font-family: var(--font-display);
+  font-size: clamp(18px, 2vw, 22px);
+  color: var(--heading);
+}
+.cta-bar__btn { flex: 0 0 auto; }
+
+/* ---------- Сетки, карточки, плитки ---------- */
+.grid { display: grid; gap: 24px; margin-top: var(--block-gap); }
+.grid--2 { grid-template-columns: repeat(2, 1fr); }
+.grid--3 { grid-template-columns: repeat(3, 1fr); }
+.grid--4 { grid-template-columns: repeat(4, 1fr); }
+.subhead + .grid { margin-top: 0; }
+
+.card {
+  border-radius: var(--radius-panel);
+  padding: 32px;
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+.card:hover { border-color: var(--surface-hover); transform: translateY(-2px); box-shadow: var(--glass-shadow-float), var(--glass-glint); }
+.card--option { border-left: 3px solid var(--accent); }
+.card--option h4 { font-size: 19px; margin-bottom: 12px; }
+.card--option p { color: var(--fg-muted); font-size: 16px; }
+
+.tile {
+  padding: 26px 24px 24px;
+  border-radius: var(--radius-panel);
+  border-top: 2px solid var(--num);
+}
+.tile h4 { margin-bottom: 10px; }
+.tile p { font-size: 15.5px; color: var(--fg-muted); }
+
+/* ---------- Маршрут КНР → РФ (R26) ----------
+ * Первый из четырёх типов композиции: линия с тремя узлами вместо ряда одинаковых карточек.
+ * Линия живёт на нижнем крае .route__rail, узлы садятся на неё точками; на ≤768px
+ * рельс становится строкой «откуда → куда», а линия — вертикальной слева от узлов. */
+.route { margin-top: var(--block-gap); }
+.route__rail {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  padding-bottom: 14px;
+}
+.route__rail::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--gold-soft);
+}
+.route__end {
+  font-family: var(--font-display);
+  font-size: 15px;
+  letter-spacing: 0.08em;
+  color: var(--fg-muted);
+}
+/* Точка назначения маршрута — акцентом: «куда» читается сразу */
+.route__end--to { color: var(--num); text-align: right; }
+.route__nodes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+.route__node { position: relative; display: flex; flex-direction: column; padding-top: 30px; }
+/* Узел на линии: кружок центром ровно на 2px-линии рельса */
+.route__node::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 2px solid var(--accent);
+}
+.route__num {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 15px;
+  letter-spacing: 0.14em;
+  color: var(--num);
+  margin-bottom: 10px;
+}
+.route__node h3 { margin-bottom: 12px; }
+.route__node p { color: var(--fg-muted); font-size: 16px; margin-bottom: 24px; }
+/* Фото прижато к низу узла: колонки с разной длиной текста выравниваются по нижнему краю */
+.route__node .photo { margin-top: auto; --photo-ratio: 4 / 3; }
+
+/* Подблоки главы #model: «Каналы продаж» и «Модели поставки» (R01, R30) */
+.platforms, .models { margin-top: var(--block-gap); padding-top: 32px; border-top: 1px solid var(--rule); }
+.platforms > h3, .models > h3 { margin-bottom: 10px; }
+.platforms > p, .models > p { color: var(--fg-muted); font-size: 16px; max-width: 720px; }
+.models .grid { margin-top: 28px; }
+.platform-list { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 22px; }
+.platform-list li {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--heading);
+  padding: 10px 18px;
+  border-radius: 999px;
+}
+.platform-list li.platform-list__more {
+  font-weight: 500;
+  color: var(--fg-muted);
+  background: transparent;
+  box-shadow: none;
+  border-style: dashed;
+  /* заливка и тень сняты — размытие снимается вместе с ними */
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* ---------- Таймлайн 30/60/90 ---------- */
+.timeline {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  margin-top: var(--block-gap);
+}
+.timeline-item { position: relative; padding-top: 28px; border-top: 1px solid var(--rule); }
+.timeline-item::before {
+  content: "";
+  position: absolute;
+  top: -5px; left: 0;
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--gold);
+}
+.timeline-item--final::before { background: var(--accent); box-shadow: 0 0 0 4px rgba(200, 16, 46, 0.25); }
+.timeline-day {
+  font-family: var(--font-display);
+  font-size: clamp(40px, 5.2vw, 60px);
+  line-height: 1;
+  color: var(--num);
+  margin-bottom: 18px;
+  font-variant-numeric: tabular-nums;
+}
+.timeline-item--final .timeline-day { color: var(--heading); }
+.timeline-item p { color: var(--fg-muted); font-size: 16px; }
+
+/* Манифест: переехал из hero в начало главы «Как работает модель» (таск 02) */
+.manifesto {
+  margin-bottom: 14px;
+  font-family: var(--font-display);
+  font-size: clamp(18px, 2vw, 22px);
+  line-height: 1.4;
+}
+.manifesto + p { color: var(--fg-muted); }
+
+.callout {
+  margin-top: var(--block-gap);
+  padding: 22px 28px;
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-panel);
+  font-size: 17px;
+  color: var(--heading);
+  max-width: 760px;
+}
+
+/* ---------- Форматы: компактное сравнение (R26) ----------
+ * Третий тип композиции. Карусели здесь нет ни на одной ширине: четыре формата стоят
+ * плотной сеткой, а их три ряда — шапка, описание, факты — выровнены между колонками
+ * через subgrid, поэтому «товар / юрлицо / деньги» читаются построчно, как в таблице. */
+.ladder { align-items: stretch; grid-template-rows: repeat(3, auto); }
+.fmt { position: relative; display: grid; grid-template-rows: subgrid; grid-row: span 3; padding-top: 20px; }
+.fmt__head { display: flex; flex-direction: column; }
+/* Кадр формата — узкая полоса фиксированной высоты, а не кадр 4:3: в сравнении
+   он опознавательный знак, а не главное; иначе на двух колонках он съедает пол-экрана. */
+.fmt .photo { height: 132px; aspect-ratio: auto; margin: -20px -32px 18px; border-radius: var(--radius-panel) var(--radius-panel) 0 0; }
+.fmt-step {
+  font-family: var(--font-display);
+  font-size: 15px;
+  color: var(--fg-muted);
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+}
+.fmt h3 { font-size: 20px; margin-bottom: 0; }
+.fmt-desc { color: var(--fg-muted); font-size: 15px; padding: 16px 0 18px; }
+.fmt-facts { border-top: 1px solid var(--rule); padding-top: 16px; font-size: 14.5px; }
+.fmt-facts dt {
+  font-size: var(--fs-micro);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  margin-top: 12px;
+}
+.fmt-facts dt:first-child { margin-top: 0; }
+.fmt-facts dd { color: var(--fg); margin-top: 2px; font-weight: 500; }
+
+/* Флагман выделяется не тёмной заливкой, а самым плотным стеклом и золотой рамкой */
+.fmt--flagship {
+  background: var(--glass-strong);
+  border-color: var(--gold-soft);
+  box-shadow: var(--glass-shadow-float), var(--glass-glint);
+}
+.fmt--flagship:hover { border-color: var(--gold); }
+.badge {
+  position: absolute;
+  top: 20px; right: 20px;
+  z-index: 1;
+  font-size: var(--fs-micro);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--accent);
+  padding: 5px 10px;
+  border-radius: 2px;
+}
+
+/* ---------- Условия (формула) ---------- */
+.modes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 40px;
+  margin-top: var(--block-gap);
+}
+.mode { display: grid; grid-template-rows: subgrid; grid-row: span 2; row-gap: 20px; }
+.mode + .mode { padding-left: 40px; border-left: 1px solid var(--rule); }
+.mode__label {
+  position: relative;
+  padding-left: 40px;
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--gold);
+}
+.mode__label::before { content: ""; position: absolute; left: 0; top: 0.6em; width: 28px; height: 2px; background: var(--gold); }
+.formula {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: start;
+  gap: 24px;
+}
+.formula-result__tag { display: block; font-size: var(--fs-micro); font-family: var(--font-sans); font-weight: 400; letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg-muted); margin-bottom: 6px; }
+.formula-result h4 { color: var(--gold); }
+.formula-part { padding-top: 24px; border-top: 2px solid var(--num); }
+.formula-part h4 { margin-bottom: 12px; font-size: 21px; }
+.formula-part p { color: var(--fg-muted); font-size: 16px; }
+.formula-op {
+  font-family: var(--font-display);
+  font-size: 44px;
+  line-height: 1;
+  color: var(--gold);
+  padding-top: 20px;
+}
+
+/* ---------- Карусель ---------- */
+.carousel { --per-view: 3; --c-gap: 24px; position: relative; margin-top: var(--block-gap); }
+.carousel__track {
+  display: flex;
+  gap: var(--c-gap);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  position: relative;
+  margin-top: 0;
+  padding: 4px 0 6px;
+}
+.carousel__track::-webkit-scrollbar { display: none; }
+.carousel__track > * {
+  flex: 0 0 calc((100% - (var(--per-view) - 1) * var(--c-gap)) / var(--per-view));
+  min-width: 0;
+  scroll-snap-align: start;
+}
+.carousel--wide { --per-view: 2; }
+.carousel__nav { display: flex; align-items: center; flex-wrap: nowrap; gap: 16px; margin-top: 24px; }
+.carousel--static .carousel__nav { display: none; }
+.carousel__btn {
+  width: 44px; height: 44px;
+  flex: 0 0 44px;
+  border-radius: 50%;
+  border-color: var(--gold-soft);
+  color: var(--gold);
+  cursor: pointer;
+  position: relative;
+  padding: 0;
+  transition: border-color 0.2s, background 0.2s;
+}
+.carousel__btn::before {
+  content: "";
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 10px; height: 10px;
+  border-left: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: translate(-30%, -50%) rotate(45deg);
+}
+.carousel__next::before { transform: translate(-70%, -50%) rotate(-135deg); }
+.carousel__btn:hover { border-color: var(--gold); background: var(--gold-tint); }
+/* Положение — счётчик «3 / 12» между стрелками. Двенадцать точек не помещались
+   в строку на телефоне и не отвечали на вопрос «где я»; ширина зафиксирована,
+   чтобы стрелки не дёргались при переходе с однозначного номера на двузначный. */
+.carousel__counter {
+  min-width: 5ch;
+  margin: 0;
+  font-size: var(--fs-micro);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.06em;
+  color: var(--fg-muted);
+  white-space: nowrap;
+}
+/* Форматы: карусель только ≤768px, шире — сетка */
+@media (min-width: 769px) {
+  .carousel--mobile .carousel__track { display: grid; overflow: visible; padding: 0; scroll-snap-type: none; }
+  .carousel--mobile .carousel__track > * { flex: none; width: auto; }
+  .carousel--mobile .carousel__nav { display: none; }
+}
+
+/* ---------- Списки (слайды каруселей) ---------- */
+.checklist li, .numbered li, .milestone {
+  border-radius: var(--radius-panel);
+  min-height: 132px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: border-color 0.2s;
+}
+.checklist li:hover, .numbered li:hover, .milestone:hover { border-color: var(--surface-hover); }
+
+.checklist li {
+  flex-direction: row;
+  align-items: center;
+  gap: 18px;
+  padding: 24px;
+  font-size: 16.5px;
+  color: var(--fg);
+}
+.checklist li::before {
+  content: "";
+  flex: 0 0 8px;
+  width: 8px; height: 8px;
+  background: var(--accent);
+  box-shadow: 3px 3px 0 var(--gold-soft);
+}
+
+.numbered, .roadmap { counter-reset: exp; }
+.numbered li {
+  counter-increment: exp;
+  flex-direction: row;
+  align-items: center;
+  gap: 18px;
+  padding: 24px;
+  font-size: 17px;
+  color: var(--fg);
+}
+.numbered li::before, .milestone::before {
+  content: counter(exp, decimal-leading-zero);
+  font-family: var(--font-display);
+  font-size: 30px;
+  line-height: 1;
+  color: var(--gold);
+}
+/* .numbered — строка: базис задаёт ширину колонки под номер */
+.numbered li::before { flex: 0 0 44px; }
+/* Что это даёт вашей компании (R21): те же слайды, но заголовок + текст в столбец */
+.benefits li { flex-direction: column; align-items: stretch; justify-content: flex-start; gap: 10px; }
+.benefits h4 { font-size: 19px; }
+.benefits p { font-size: 15.5px; color: var(--fg-muted); }
+
+/* ---------- Раскрывашка длинного списка ----------
+ * Списки «Что вы получаете» (12) и «Что это даёт» (8) живут в панелях вкладок.
+ * Шире 768px они видны целиком и кнопки нет; на узком экране показаны первые
+ * четыре пункта, остальные — по кнопке. Порог тот же, что у .carousel--mobile (D01):
+ * узкий экран определяется в одном месте, иначе состояния разъезжаются.
+ * Состояние держит .disclosure--collapsed на самом списке, кнопка стоит следующим
+ * элементом и связана со списком через aria-controls. */
+.disclosure-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 44px;
+  margin-top: 16px;
+  padding: 10px 20px;
+  border-radius: var(--radius);
+  border-color: var(--gold-soft);
+  color: var(--gold);
+  font: inherit;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+.disclosure-toggle:hover { border-color: var(--gold); background: var(--gold-tint); }
+@media (max-width: 768px) {
+  .disclosure-toggle { display: flex; }
+  .disclosure--collapsed > li:nth-child(n+5) { display: none; }
+}
+
+/* ---------- Кейсы ---------- */
+.case { --photo-ratio: 16 / 10; }
+.case .photo { margin: -32px -32px 24px; border-radius: var(--radius-panel) var(--radius-panel) 0 0; }
+.case-cat {
+  font-size: var(--fs-micro);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  margin-bottom: 20px;
+}
+.case-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.case-metrics > div { padding: 12px 0; border-top: 1px solid var(--rule); }
+.case-metrics dt { font-size: var(--fs-micro); color: var(--fg-muted); }
+.case-metrics dd {
+  font-family: var(--font-display);
+  font-size: 26px;
+  line-height: 1.1;
+  color: var(--num);
+  margin-top: 4px;
+}
+.case-note { margin-top: 20px; font-size: 15px; color: var(--fg-muted); }
+
+/* Кейс целиком (R15, R16): три колонки «было → сделали → стало» и строка метрик под ними.
+ * Колонку с плейсхолдером в тексте скрывает hidePlaceholders(); когда скрыты все три,
+ * блок уходит целиком — тем же приёмом, что и .about, чтобы не осталось рамки с заголовком. */
+.case-story {
+  margin-top: var(--block-gap);
+  padding: clamp(28px, 3.4vw, 48px);
+  border-radius: var(--radius-panel);
+  counter-reset: casestep;
+}
+.case-story:not(:has(.case-story__col:not([hidden]))) { display: none; }
+/* Четвёртый тип композиции: не карточка соседнего блока, а разворот — крупный заголовок,
+   три шага лентой и строка цифр под ними. */
+.case-story__head { max-width: 780px; }
+.case-story__head h4 { font-size: clamp(24px, 2.6vw, 32px); line-height: 1.25; }
+.case-story__lead { margin-top: 12px; font-size: 18px; color: var(--fg-muted); }
+.case-story__cols {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  margin-top: 36px;
+}
+.case-story__col { position: relative; padding-top: 22px; border-top: 2px solid var(--rule); font-size: 16px; }
+.case-story__col--result { border-top-color: var(--accent); }
+/* Связка между шагами: отрезок в промежутке колонок, на уровне верхней линейки —
+   приём тот же, что у ленты вех дорожной карты */
+.case-story__col:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: -2px;
+  right: -32px;
+  width: 32px;
+  height: 2px;
+  background: var(--rule);
+}
+.case-story__step {
+  font-size: 14px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  margin-bottom: 10px;
+}
+/* Нумерация шагов: скрытая колонка-плейсхолдер счётчик не двигает, дыр в нумерации нет */
+.case-story__step::before {
+  counter-increment: casestep;
+  content: counter(casestep, decimal-leading-zero);
+  margin-right: 10px;
+  font-family: var(--font-display);
+  color: var(--num);
+}
+/* Пять метрик: колонок столько, сколько влезает, — «8 400 000 ₽» крупным кеглем не должно ломаться.
+   Пока все значения плейсхолдеры, строка цифр не оставляет от себя пустых линеек. */
+.case-metrics--story { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 20px; margin-top: 40px; }
+.case-metrics--story:not(:has(> div:not([hidden]))) { display: none; }
+.case-metrics--story > div { border-top: 2px solid var(--num); padding-top: 14px; }
+.case-metrics--story dd { font-size: clamp(26px, 2.2vw, 32px); }
+
+/* ---------- Контакты ---------- */
+.contacts {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 56px;
+  align-items: start;
+  margin-top: var(--block-gap);
+}
+.qr { margin: 0; }
+.qr img { width: 220px; height: 220px; padding: 10px; border-radius: var(--radius-panel); background: #fff; }
+.qr figcaption { margin-top: 12px; font-size: var(--fs-micro); color: var(--fg-muted); max-width: 220px; }
+/* Сноска «удобно с компьютера» нужна там, где QR уходит вниз, — на узком экране */
+.qr__note { display: none; margin-top: 8px; font-size: var(--fs-micro); color: var(--fg-muted); max-width: 220px; }
+.contact-list { max-width: 560px; }
+.contact-row { padding: 20px 0; border-top: 1px solid var(--rule); }
+.contact-row:last-child { border-bottom: 1px solid var(--rule); }
+.contact-row dt {
+  font-size: var(--fs-micro);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+.contact-row dd {
+  font-family: var(--font-display);
+  font-size: 26px;
+  color: var(--heading);
+  margin-top: 6px;
+  word-break: break-word;
+}
+.contact-val { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 20px; }
+.contact-val__text--mono { font-family: var(--font-mono); font-size: 22px; letter-spacing: 0.02em; }
+/* Адрес приглашения длиннее ID и показан целиком: кегль ниже, перенос разрешён по любому знаку */
+.contact-val__text--url { font-size: 17px; letter-spacing: 0; word-break: break-all; max-width: 100%; }
+/* Пояснение под строкой контакта: занимает всю ширину флекса, поэтому встаёт своей строкой */
+.contact-note {
+  flex: 1 0 100%;
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--fs-micro);
+  line-height: 1.5;
+  color: var(--fg-muted);
+}
+
+/* Ссылкой строка выглядит только когда href подставлен: плейсхолдер остаётся текстом */
+.contact-link[href] {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--num);
+  text-decoration: underline;
+  text-decoration-color: var(--gold-soft);
+  text-underline-offset: 6px;
+  transition: color 0.2s, text-decoration-color 0.2s;
+}
+.contact-link[href]:hover { text-decoration-color: currentColor; }
+
+.copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 18px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  color: var(--fg);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+.copy-btn:hover { border-color: var(--gold); background: var(--gold-tint); color: var(--num); }
+.copy-btn svg { flex: 0 0 auto; }
+.copy-btn__label { white-space: nowrap; }
+
+/* ---------- Почему сейчас: тезисы с годом ---------- */
+.theses {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px 40px;
+  margin-top: var(--block-gap);
+}
+.thesis { padding-top: 22px; border-top: 1px solid var(--rule); }
+.thesis-year {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 15px;
+  letter-spacing: 0.12em;
+  color: var(--num);
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 12px;
+}
+.thesis h4 { font-size: 20px; margin-bottom: 10px; }
+.thesis p { color: var(--fg-muted); font-size: 16px; }
+/* Перспективы рынка (R02): три тренда под лидом market.plead */
+.prospects { grid-template-columns: repeat(3, 1fr); margin-top: 36px; }
+/* Офлайн-розница (R03): callout с заголовком */
+.offline h4 { margin-bottom: 8px; }
+.offline p { color: var(--fg-muted); font-size: 16px; }
+
+/* ---------- Принципы ---------- */
+/* Строка обещаний в главе «Как работает модель»: чипы площадок в другом регистре.
+   Полные формулировки принципов раскрываются вопросом в главе «Вопросы» (R23). */
+.principle-tags li {
+  font-family: var(--font-display);
+  font-size: 17px;
+  letter-spacing: 0.04em;
+  border-color: var(--gold-soft);
+}
+.principle-tag {
+  display: block;
+  margin-top: 20px;
+  padding-top: 12px;
+  border-top: 1px solid var(--rule);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* ---------- Вкладки: «Почему мы» · «Что вы получаете» · «Что это даёт» ----------
+   Три прежние секции одним блоком; панели переключает initTabs(), в print раскрыты все. */
+.tabs { margin-top: var(--sub-gap); }
+/* Список переносится на узком экране, поэтому подчёркивание активной вкладки принадлежит
+   самой вкладке, а линия под рядами — панели: общей рамки нет, и при двух рядах ничто
+   не повисает в воздухе. Строчный зазор обязателен — иначе ряды слипаются. */
+.tabs__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 28px;
+}
+.tabs__tab {
+  appearance: none;
+  background: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  padding: 12px 0 10px;
+  min-height: 44px;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--fg-muted);
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+.tabs__tab:hover { color: var(--fg); }
+.tabs__tab[aria-selected="true"] { color: var(--heading); border-bottom-color: var(--accent); }
+/* Панель — стеклянная плашка; её верхний край и есть линия под рядами вкладок.
+   Акцентную рамку сюда ставить нельзя: она сливается с подчёркиванием активной вкладки,
+   а подчёркивание принадлежит вкладке (решение таска 03). */
+.tabs__panel {
+  margin-top: 10px;
+  padding: 36px 32px 32px;
+  border-radius: var(--radius-panel);
+}
+.tabs__title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(22px, 2.2vw, 28px);
+  letter-spacing: -0.01em;
+}
+.tabs__panel .lead { font-size: 18px; margin-top: 16px; }
+
+/* ---------- Каждую неделю (внутри «Условий») ---------- */
+.weekly {
+  margin-top: var(--block-gap);
+  padding: 32px;
+  border-radius: var(--radius-panel);
+}
+.weekly__title { font-size: 22px; }
+.weekly__lead { margin-top: 8px; font-size: 16px; color: var(--fg-muted); }
+.weekly__list {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-top: 24px;
+  counter-reset: wk;
+}
+.weekly__list li {
+  counter-increment: wk;
+  padding-top: 14px;
+  border-top: 1px solid var(--num);
+  font-size: 15px;
+  color: var(--fg);
+}
+.weekly__list li::before {
+  content: counter(wk, decimal-leading-zero);
+  display: block;
+  font-family: var(--font-display);
+  font-size: 22px;
+  line-height: 1;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+
+/* ---------- Сравнение трёх путей ---------- */
+.compare-hint { display: none; margin-top: 28px; font-size: var(--fs-micro); color: var(--fg-muted); }
+.compare-wrap {
+  margin-top: var(--block-gap);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius-panel);
+}
+.compare { width: 100%; min-width: 820px; border-collapse: collapse; font-size: 15px; }
+.compare th, .compare td {
+  padding: 18px 20px;
+  text-align: left;
+  vertical-align: top;
+  border-top: 1px solid var(--rule);
+}
+.compare thead th {
+  border-top: 0;
+  padding: 20px 20px 14px;
+  font-size: var(--fs-micro);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+.compare tbody th { width: 18%; font-weight: 600; color: var(--heading); }
+.compare td { color: var(--fg-muted); line-height: 1.6; }
+.compare .compare__us { background: var(--gold-tint); color: var(--fg); border-left: 1px solid var(--gold-soft); }
+.compare thead .compare__us { color: var(--heading); box-shadow: inset 0 3px 0 var(--gold); }
+
+/* ---------- FAQ: аккордеон ---------- */
+.faq { margin-top: var(--block-gap); max-width: 900px; border-top: 1px solid var(--rule); }
+.faq__item { border-bottom: 1px solid var(--rule); }
+.faq__btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  width: 100%;
+  min-height: 64px;
+  padding: 18px 0;
+  font: inherit;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: left;
+  color: var(--heading);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.faq__btn:hover { color: var(--accent); }
+.faq__icon {
+  position: relative;
+  flex: 0 0 44px;
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  color: var(--heading);
+  transition: transform 0.25s, border-color 0.2s, color 0.2s;
+}
+.faq__icon::before, .faq__icon::after {
+  content: "";
+  position: absolute;
+  top: 50%; left: 50%;
+  background: currentColor;
+  transform: translate(-50%, -50%);
+}
+.faq__icon::before { width: 14px; height: 1.5px; }
+.faq__icon::after { width: 1.5px; height: 14px; }
+.faq__btn[aria-expanded="true"] .faq__icon { transform: rotate(45deg); border-color: var(--gold); color: var(--gold); }
+.faq__a { padding: 0 68px 24px 0; }
+.faq__a p { font-size: 16px; color: var(--fg-muted); max-width: 760px; }
+.faq__a > h4 { margin-bottom: 8px; }
+/* Принципы партнёрства в ответе: заголовок, полная формулировка и тег — по каждому */
+.faq__list { display: grid; gap: 22px; margin-top: 20px; max-width: 760px; }
+.faq__list > li { padding-top: 16px; border-top: 1px solid var(--rule); }
+.faq__list h4 { margin-bottom: 6px; }
+.faq__list .principle-tag { margin-top: 12px; padding-top: 10px; }
+/* Ожидания от партнёра в ответе: тот же счётчик, но строкой, а не карточкой-слайдом */
+.faq__numbered { display: grid; margin-top: 14px; max-width: 760px; }
+.faq__numbered li {
+  min-height: 0;
+  justify-content: flex-start; /* карточка-слайд центрирует содержимое, строка — нет */
+  gap: 14px;
+  padding: 12px 0;
+  font-size: 16px;
+  color: var(--fg-muted);
+  background: none;
+  border: 0;
+  border-top: 1px solid var(--rule);
+  border-radius: 0;
+  /* от стеклянной карточки-слайда здесь не остаётся ничего, размытия в том числе */
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.faq__numbered li:hover { border-color: var(--rule); }
+.faq__numbered li::before { flex: 0 0 34px; font-size: 20px; }
+
+/* ---------- О компании (в контактах) ---------- */
+.about { margin-top: var(--block-gap); max-width: 560px; }
+.about__title { font-size: 22px; margin-bottom: 8px; }
+.about:not(:has(.contact-row:not([hidden]))) { display: none; }
+
+/* ---------- Футер ---------- */
+.site-footer {
+  background: var(--paper-2);
+  color: var(--fg-muted);
+  font-size: var(--fs-micro);
+  border-top: 1px solid var(--rule);
+  position: relative;
+}
+.site-footer::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 12px;
+  background: var(--fret-strip) repeat-x center top / 24px 12px;
+  opacity: 0.28;
+  pointer-events: none;
+}
+.footer-inner {
+  display: flex;
+  justify-content: space-between;
+  gap: 32px;
+  padding-top: 48px;
+  padding-bottom: 40px;
+}
+.footer-brand { font-family: var(--font-display); font-size: 17px; color: var(--heading); }
+.footer-legal { margin-top: 6px; }
+.footer-meta { text-align: right; }
+.footer-note { margin-top: 6px; font-size: var(--fs-micro); }
+
+/* ---------- Команда: опыт и клубы (R04.1, R06) ---------- */
+.footnote--exp { margin-top: 18px; font-size: var(--fs-micro); letter-spacing: 0.04em; color: var(--num); }
+/* Названия клубов длиннее чипов площадок — столбцом, с пояснением в строке */
+.clubs .platform-list { flex-direction: column; align-items: flex-start; gap: 10px; max-width: 720px; }
+.clubs .platform-list li {
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  padding: 12px 20px;
+  border-radius: var(--radius);
+}
+
+/* ---------- Как мы считаем (R09–R12, R31) ---------- */
+/* Схема расчёта (R26): второй тип композиции — столбец статей с итогом вместо карточки.
+ * Слева объяснение, справа сам «лист расчёта»; на узком экране лист уходит под текст. */
+.calc {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 380px);
+  gap: 40px;
+  align-items: start;
+  margin-top: var(--block-gap);
+}
+.calc__intro h4 { font-size: 21px; margin-bottom: 12px; }
+.calc__intro p { color: var(--fg-muted); font-size: 16px; }
+.calc__sheet { padding: 22px 26px; border-radius: var(--radius-panel); }
+.calc__row {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 11px 0;
+  border-top: 1px solid var(--rule);
+  font-size: 16px;
+  color: var(--fg-muted);
+}
+.calc__row:first-child { border-top: 0; padding-top: 0; }
+.calc__op {
+  flex: 0 0 18px;
+  font-family: var(--font-display);
+  font-size: 18px;
+  line-height: 1;
+  color: var(--gold);
+  text-align: center;
+}
+/* Первая строка — база расчёта, последняя — итог: маржа и точка безубыточности */
+.calc__row--base { color: var(--heading); font-weight: 500; }
+.calc__row--total {
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 2px solid var(--num);
+  font-family: var(--font-display);
+  font-size: 19px;
+  line-height: 1.35;
+  color: var(--num);
+}
+.calc__row--total .calc__op { color: var(--accent); }
+/* Одинокая карточка в последнем ряду занимает всю ширину, а не половину */
+.method .card:last-child:nth-child(odd) { grid-column: 1 / -1; }
+.method .card h4 { font-size: 21px; margin-bottom: 12px; }
+.method .card p { color: var(--fg-muted); font-size: 16px; }
+.method-list, .milestone-steps { display: grid; }
+.method-list li, .milestone-steps li { position: relative; padding-left: 22px; color: var(--fg-muted); }
+.method-list { margin-top: 16px; gap: 10px; }
+.method-list li { font-size: 15.5px; }
+.method-list li::before, .milestone-steps li::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 0.6em;
+  width: 7px; height: 7px;
+  background: var(--accent);
+  box-shadow: 2px 2px 0 var(--gold-soft);
+}
+.method-goal h4 { font-size: 22px; margin-bottom: 8px; }
+.method-goal p { font-size: 16.5px; color: var(--fg-muted); }
+
+/* ---------- Скрины из ЛК (R07–R08) ----------
+ * Слайды без файла и раскрытие карусели держит app.js (setupDeferredGroup): он убирает слайды
+ * из трека и снимает hidden с обёртки .proof-shots. Скрытых слайдов в треке не бывает,
+ * прятать здесь нечего; текстовая часть секции видна всегда и своих правил не требует.
+ * Обёртка — голый блок без собственных отступов: без скринов её нет (hidden), а с ними
+ * зазор над каруселью даёт margin-top самой .carousel. */
+.shot { margin: 0; }
+.shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-panel);
+}
+.shot figcaption { margin-top: 14px; font-size: 14.5px; color: var(--fg-muted); }
+/* Кадр кабинета работает только если на нём читается цифра: два слайда в ряд ужимали
+   скрин шириной 1600 px до 524 px, и число превращалось в пятно. Здесь слайд всегда один
+   в ряду — на любой ширине. .carousel--wide не трогаем: её делят другие секции. */
+.proof-shots .carousel { --per-view: 1; }
+/* Кадры разной высоты (1.5 … 2.5). По умолчанию флекс-трек растягивает каждую фигуру
+   до высоты самой высокой, и под низким кадром подпись отъезжала вниз на сотни пикселей.
+   Растяжение отпущено: фигура — по своему содержимому, подпись сразу под кадром, остаток
+   высоты трека уходит под фигуру, где у .shot нет ни фона, ни рамки, и потому не виден. */
+.proof-shots .carousel__track { align-items: flex-start; }
+
+/* ---------- Настоящие материалы: assets/real/ (R10–R17.1) ----------
+ * Группы скрыты в разметке и раскрываются тем же инициализатором отложенных групп,
+ * что и скрины ЛК (app.js, setupDeferredGroup), — прятать здесь нечего.
+ * Портреты — сетка лиц одного кадра 4:5, иначе разновысокие лица в ряду рассыпаются.
+ * Склад, отчёт и юрлицо — своей высотой: обрезать лист отчёта или свидетельства нельзя,
+ * из них важен весь кадр. Выставка — один широкий кадр. */
+.real-group {
+  display: grid;
+  /* Треков всегда столько, сколько слотов в группе, — не auto-fit: фигуры без файла
+     инициализатор удаляет, а класть файлы будут по одному, и от auto-fit единственный
+     портрет растянулся бы во весь экран. Пустые треки остаются пустыми, выжившие
+     прижаты к началу строки и держат свою ширину при любом числе файлов. */
+  grid-template-columns: repeat(var(--real-cols, 3), minmax(0, 1fr));
+  gap: 24px;
+  align-items: start;
+  margin-top: var(--block-gap);
+}
+.real-group--people { --real-cols: 3; } /* три портрета */
+.real-group--docs { --real-cols: 2; }   /* склад и юрлицо; отдельно стоящий отчёт — левая колонка */
+.real-group--wide { --real-cols: 1; }   /* выставка: один широкий кадр */
+.real { margin: 0; }
+.real img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-panel);
+}
+.real figcaption { margin-top: 14px; font-size: 14.5px; color: var(--fg-muted); }
+.real-group--people .real img { aspect-ratio: 4 / 5; object-fit: cover; }
+.real-group--wide .real img { aspect-ratio: 16 / 9; object-fit: cover; }
+/* Портреты — стена лиц: кадр без стеклянной рамки, имя и роль на золотой линейке под ним.
+   Это не та же карточка, что в соседних блоках главы (R26). */
+.real-group--people .real img {
+  border: 0;
+  box-shadow: none;
+  border-radius: var(--radius);
+  /* кадр непрозрачен: рамка снята — снято и размытие */
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.real-group--people .real figcaption { margin-top: 0; padding-top: 12px; border-top: 2px solid var(--gold-soft); }
+.real__name { display: block; font-family: var(--font-display); font-size: 20px; color: var(--heading); }
+.real__role { display: block; margin-top: 2px; font-size: 14.5px; color: var(--fg-muted); }
+/* Настоящее вытеснило постановочное: app.js ставит hidden на figure.photo, а баннер без
+ * видимого фото не должен оставлять рамку с градиентом — приём тот же, что у .about. */
+.photo-banner:not(:has(.photo:not([hidden]))) { display: none; }
+
+/* ---------- Дорожная карта запуска (R13–R15) ----------
+ * Пять вех лентой; номера — общий счётчик exp, что и у .numbered.
+ * ≤768px секция превращается в карусель силами .carousel--mobile (D01),
+ * сетка и соединительная линия там не действуют. */
+.roadmap { grid-template-columns: repeat(3, 1fr); align-items: stretch; }
+.milestone {
+  counter-increment: exp;
+  position: relative;
+  justify-content: flex-start;
+  gap: 10px;
+  padding: 24px 20px 26px;
+}
+/* Линия ленты: сегмент в промежутке между вехами, на уровне номера;
+   у последней вехи в ряду тянуть некуда — см. :nth-child ниже */
+.milestone:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 39px;
+  right: calc(-1 * var(--c-gap));
+  width: var(--c-gap);
+  height: 1px;
+  background: var(--gold-soft);
+}
+/* .milestone — столбец: базис задаёт высоту полосы с номером над заголовком */
+.milestone::before { flex: 0 0 auto; }
+.roadmap .milestone:nth-child(3n)::after { display: none; }
+.milestone h4 { font-size: 18px; }
+.milestone-result { font-size: 14.5px; color: var(--num); }
+.milestone-steps { margin-top: 2px; gap: 8px; }
+.milestone-steps li { font-size: 14.5px; }
+/* Ссылка на 90-дневный план запуска в лиде */
+.roadmap-link { color: var(--num); border-bottom: 1px solid var(--gold-soft); white-space: nowrap; }
+.roadmap-link:hover { border-bottom-color: var(--gold); }
+
+/* ---------- Адаптив ---------- */
+@media (max-width: 1024px) {
+  :root { --section-y: 88px; }
+  .grid--4 { grid-template-columns: repeat(2, 1fr); }
+  .models .grid--3 { grid-template-columns: 1fr; }
+  .prospects { grid-template-columns: repeat(2, 1fr); }
+  .roadmap { grid-template-columns: repeat(2, 1fr); }
+  .milestone::after { display: none; }
+  .weekly__list { grid-template-columns: repeat(3, 1fr); }
+  .modes { grid-template-columns: 1fr; grid-template-rows: none; gap: 32px; }
+  .mode { grid-template-rows: auto auto; grid-row: auto; }
+  .mode + .mode { padding-left: 0; padding-top: 32px; border-left: 0; border-top: 1px solid var(--rule); }
+  .formula { grid-template-columns: 1fr; gap: 12px; }
+  .formula-op { padding: 0; text-align: left; font-size: 32px; }
+  .carousel { --per-view: 2; }
+}
+
+@media (max-width: 768px) {
+  /* Маршрут на узком экране: та же линия, но вертикальная — слева от столбца узлов.
+     .route__rail отдаёт свои концы прямо в грид (display: contents), поэтому «куда»
+     встаёт под узлами, в конце линии, а горизонтальная линия рельса не рисуется вовсе. */
+  .route { position: relative; display: grid; padding-left: 26px; }
+  .route::before {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 0.7em;
+    bottom: 0.7em;
+    width: 2px;
+    background: var(--gold-soft);
+  }
+  .route__rail { display: contents; }
+  .route__end { order: 1; padding-bottom: 24px; }
+  .route__end--to { order: 3; padding: 24px 0 0; text-align: left; }
+  .route__nodes { order: 2; grid-template-columns: 1fr; gap: 28px; }
+  .route__node { padding-top: 0; }
+  .route__node::before { top: 3px; left: -26px; }
+  /* Якорей в шапке нет — нет и подсветки активной главы */
+  .site-nav { display: none; }
+  /* QR перестаёт быть единственной дверью: сначала WeChat с копированием, телефон и почта */
+  .contacts { display: flex; flex-direction: column; }
+  .contact-list { order: 1; }
+  .qr { order: 2; }
+  .qr__note { display: block; }
+}
+
+@media (max-width: 760px) {
+  :root { --section-y: 64px; --gutter: 20px; --block-gap: 40px; --sub-gap: 56px; }
+  .cta-bar__inner { flex-direction: column; align-items: flex-start; gap: 18px; padding: 22px var(--gutter); }
+  body { font-size: 16px; }
+  .theses { grid-template-columns: 1fr; gap: 24px; }
+  .weekly { padding: 24px; }
+  .tile { padding: 22px 20px 20px; }
+  .real-group--people, .real-group--docs { --real-cols: 2; }
+  .case-story { padding: 24px; }
+  .calc { grid-template-columns: 1fr; gap: 24px; }
+  .calc__sheet { padding: 20px; }
+  .case-story__cols { grid-template-columns: 1fr; gap: 20px; margin-top: 24px; }
+  .case-story__col::after { display: none; }
+  .weekly__list { grid-template-columns: 1fr; gap: 0; margin-top: 16px; }
+  .weekly__list li { display: flex; align-items: baseline; gap: 14px; padding: 12px 0; border-top: 1px solid var(--rule); }
+  .weekly__list li::before { margin: 0; font-size: 18px; }
+  .compare-hint { display: block; }
+  .compare-wrap { margin-top: 12px; }
+  .compare { min-width: 680px; font-size: 14px; }
+  .compare th, .compare td { padding: 14px; }
+  .compare thead th { padding: 16px 14px 12px; }
+  /* Заголовок строки остаётся на месте, пока строку прокручивают вбок: иначе
+     на телефоне видны значения, но не видно, о чём они. Фон непрозрачный —
+     сквозь стекло проступали бы уезжающие ячейки. */
+  .compare tbody th, .compare thead th:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    width: 26%;
+    background: var(--surface);
+    box-shadow: var(--sticky-shadow);
+  }
+  .compare thead th:first-child { z-index: 2; }
+  .faq__btn { font-size: 16.5px; gap: 16px; }
+  .faq__a { padding-right: 0; }
+  .hero { padding: clamp(40px, 6vh, 72px) 0 clamp(36px, 5vh, 64px); }
+  .hero::before, .hero::after { width: 60px; height: 60px; opacity: 0.4; }
+  .hero::before { top: 14px; left: 14px; }
+  .hero::after { bottom: 14px; right: 14px; }
+  .grid--2, .grid--3, .grid--4 { grid-template-columns: 1fr; }
+  .grid { gap: 20px; }
+  .timeline { grid-template-columns: 1fr; gap: 28px; }
+  .stats { grid-template-columns: 1fr; }
+  .stats .stat { padding: 24px 0; border-right: none; border-bottom: 1px solid var(--rule); }
+  .stats .stat + .stat { padding-left: 0; }
+  .stats .stat:last-child { border-bottom: none; }
+  .stats--hero { margin-top: 28px; }
+  .stats--hero .stat { display: flex; align-items: baseline; gap: 12px; padding: 12px 0; }
+  /* место под самое длинное число (1000) занято сразу — подпись не едет за count-up */
+  .stats--hero .stat-num { font-size: 32px; min-width: 4ch; }
+  .stats--hero .stat-label { margin-top: 0; }
+  .stats--cards { gap: 16px; }
+  .stats--cards .stat { padding: 28px 24px; border-bottom: none; }
+  .stats--cards .stat + .stat { padding-left: 24px; }
+  .stat-label { max-width: none; }
+  .lead { font-size: 17px; }
+  .card { padding: 24px; }
+  .ladder { grid-template-rows: none; }
+  .fmt { display: flex; flex-direction: column; grid-row: auto; }
+  .fmt .photo { height: 150px; margin: -20px -24px 18px; }
+  .case .photo { margin: -24px -24px 20px; }
+  .contacts { grid-template-columns: 1fr; gap: 36px; }
+  .contact-row dd { font-size: 21px; }
+  .footer-inner { flex-direction: column; }
+  .footer-meta { text-align: left; }
+  .subhead { margin-top: 56px; }
+  .tabs__list { column-gap: 20px; } /* строчный зазор из базового правила не трогаем: здесь список и переносится */
+  .tabs__tab { font-size: 14px; }
+  .tabs__panel { padding: 28px 20px 24px; }
+  .photo-banner { --photo-ratio: 16 / 9; }
+  .carousel { --per-view: 1.15; --c-gap: 16px; }
+  .carousel--wide { --per-view: 1.1; }
+  .carousel__nav { margin-top: 20px; }
+  .wm { font-size: clamp(110px, 34vw, 160px); }
+  .ticker { padding: 12px 0; }
+  .ticker__list li { padding: 0 18px; font-size: var(--fs-micro); }
+  .ticker__list li::before { margin-right: 18px; }
+}
+
+@media (max-width: 560px) {
+  .real-group { --real-cols: 1; }
+  /* Кнопка связи остаётся, но одной иконкой — иначе шапка переносится на две строки */
+  .header-cta__label { display: none; }
+  .btn.header-cta { width: 44px; min-width: 44px; padding: 0; }
+}
+
+@media (max-width: 400px) {
+  .hero-title { font-size: 40px; }
+  .stat-num { font-size: 42px; }
+  :root { --header-h: 56px; }
+  .brand-name { font-size: 16px; }
+  .lang-toggle { padding: 7px 14px; }
+  .btn { width: 100%; text-align: center; }
+  .case-metrics { grid-template-columns: 1fr; gap: 0; }
+}
+
+/* ---------- Запасные режимы стекла ----------
+ * Оба блока стоят В КОНЦЕ файла намеренно: селекторы здесь той же специфичности,
+ * что и у собственных правил компонентов, поэтому побеждают только порядком.
+ * Перенесёте выше — переопределения молча перестанут применяться.
+ * Списки компонентов совпадают со списками градаций стекла в начале файла:
+ * добавили компонент туда — добавьте и сюда, оба режима. */
+
+/* Без backdrop-filter полупрозрачная подложка превращается в мутное пятно
+   поверх фона — поэтому там, где размытия нет, поверхности непрозрачны. */
+@supports not ((backdrop-filter: blur(2px)) or (-webkit-backdrop-filter: blur(2px))) {
+  .glass,
+  .card, .callout, .weekly, .case-story, .calc__sheet, .compare-wrap, .cta-bar, .site-header,
+  .checklist li, .numbered li, .milestone, .photo, .shot img, .real img, .qr img,
+  .photo__cap {
+    background: var(--surface);
+  }
+  .glass-soft,
+  .tile, .tabs__panel, .platform-list li, .copy-btn, .lang-toggle, .carousel__btn,
+  .disclosure-toggle, .faq__icon, .ticker {
+    background: var(--surface-soft);
+  }
+  .fmt--flagship { background: var(--surface-strong); }
+}
+
+/* Читателю, который просил убрать прозрачность, стекло не показываем вовсе */
+@media (prefers-reduced-transparency: reduce) {
+  .glass,
+  .card, .callout, .weekly, .case-story, .calc__sheet, .compare-wrap, .cta-bar, .site-header,
+  .checklist li, .numbered li, .milestone, .photo, .shot img, .real img, .qr img,
+  .photo__cap {
+    background: var(--surface);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .glass-soft,
+  .tile, .tabs__panel, .platform-list li, .copy-btn, .lang-toggle, .carousel__btn,
+  .disclosure-toggle, .faq__icon, .ticker {
+    background: var(--surface-soft);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .fmt--flagship {
+    background: var(--surface-strong);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  /* фон первого экрана остаётся тёмным: он не стекло, а подложка под заголовок */
+  .hero > .photo { background: var(--navy); }
+}
+
+/* ---------- Печать: светлый лист, карусели → сетка, ничего не обрезать ---------- */
+@page {
+  size: A4;
+  margin: 12mm 14mm 14mm;
+}
+
+@media print {
+  :root { --section-y: 28pt; --accent: #7a2820; --gold: #7a5f16; --gold-glint: #7a5f16; --gold-soft: #7a5f16; }
+  /* Тёмных поверхностей на сайте больше нет — тёмные токены объявляет один .hero,
+     поэтому в print-сбросе тоже остались только он и body. */
+  .hero, .section, body {
+    --fg: #111; --fg-muted: #444; --heading: #111; --rule: #bbb; --surface: #fff; --surface-hover: #bbb; --num: #111;
+    background: #fff !important;
+    color: #111 !important;
+  }
+  /* Стекло на листе не печатается: ни размытия, ни полупрозрачности, ни теней */
+  .glass, .glass-soft,
+  .card, .callout, .weekly, .case-story, .calc__sheet, .compare-wrap, .cta-bar, .site-header,
+  .checklist li, .numbered li, .milestone, .photo, .shot img, .real img, .qr img,
+  .tile, .tabs__panel, .platform-list li, .copy-btn, .lang-toggle, .carousel__btn,
+  .faq__icon, .ticker, .photo__cap, .fmt--flagship {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    background: #fff !important;
+    box-shadow: none !important;
+    border-color: #bbb !important;
+  }
+  html { scroll-behavior: auto; }
+  body { font-size: 11pt; line-height: 1.45; }
+  .site-header { display: none !important; }
+  .lang-toggle, .hero-actions, .wm, .section::before, .site-footer::before, .hero::before, .hero::after, .photo-banner::after, .carousel__nav, .compare-hint, .disclosure-toggle, .faq__icon { display: none !important; }
+  /* На листе прокручивать нечего — свёрнутый список печатается целиком */
+  .disclosure--collapsed > li { display: flex !important; }
+  .section, .hero { padding: 24pt 0; break-inside: auto; overflow: visible; }
+  .hero-print-brand { display: flex; position: relative; z-index: 20; align-items: center; gap: 9pt; padding-bottom: 12pt; margin-bottom: 24pt; border-bottom: 1px solid #999; background: #fff; color: #111; font-family: var(--font-display); font-size: 14pt; }
+  .hero-print-brand img { width: 24pt; height: 24pt; }
+  /* Семь глав: каждая с новой страницы (первая — hero, разрыв перед ней не нужен) */
+  #model, #proof, #terms, #launch, #faq, #contacts { break-before: page; page-break-before: always; }
+  /* Вкладки: на листе видны все три панели, переключать нечего. Но подписи вкладок —
+     единственное место, где живут why.eyebrow, give.eyebrow и benefits.title, а PDF в WeChat —
+     основной канал показа: печатаем их строкой-оглавлением над панелями, без вида кнопок. */
+  .tabs__list { gap: 4pt 16pt; }
+  .tabs__tab {
+    min-height: 0;
+    padding: 0 0 6pt;
+    font-size: 10pt;
+    color: #111 !important;
+    border-bottom: 0 !important;
+  }
+  .tabs__panel[hidden] { display: block !important; }
+  .tabs__panel { padding: 14pt 0 0; border: 0; border-top: 1px solid #bbb; }
+  /* Новые секции: аккордеон раскрыт, таблица влезает в лист */
+  .faq__a[hidden] { display: block !important; }
+  .faq { max-width: none; border-color: #bbb; }
+  .faq__item { border-color: #bbb; break-inside: avoid; page-break-inside: avoid; }
+  .faq__btn { min-height: 0; padding: 8pt 0 3pt; font-size: 11.5pt; color: #111; }
+  .faq__a { padding: 0 0 8pt; }
+  .compare-wrap { overflow: visible; border-color: #bbb; background: #fff; }
+  .compare { min-width: 0; font-size: 9pt; }
+  .compare th, .compare td { padding: 6pt 8pt; border-color: #bbb; }
+  .compare tbody th { width: 16%; }
+  .compare .compare__us { background: #f2f2f0 !important; border-left-color: #bbb; }
+  .compare thead .compare__us { box-shadow: inset 0 2pt 0 #7a2820; }
+  .compare tr, .thesis, .weekly, .about, .faq__list > li, .calc { break-inside: avoid; page-break-inside: avoid; }
+  .calc { grid-template-columns: 1fr 1fr; gap: 14pt; }
+  .calc__sheet { border: 1px solid #bbb; padding: 10pt 12pt; }
+  .theses { grid-template-columns: repeat(2, 1fr); gap: 10pt 18pt; }
+  /* один столбец режимов уже задан правилами @media (max-width: 1024px) — A4 уже 1024px */
+  .modes { gap: 14pt; }
+  .mode { row-gap: 10pt; break-inside: avoid; page-break-inside: avoid; }
+  .mode + .mode { padding-top: 14pt; border-top-color: #bbb; }
+  .mode__label { color: #7a2820; }
+  .mode__label::before { background: #7a2820; }
+  .formula { grid-template-columns: 1fr auto 1fr; gap: 10pt; }
+  .formula-result h4 { color: #7a2820; }
+  .weekly { border-color: #bbb; background: #fff; padding: 12pt 14pt; }
+  .weekly__list { grid-template-columns: repeat(5, 1fr); gap: 8pt; }
+  .weekly__list li::before { color: #7a2820; }
+  .manifesto { color: #7a2820; }
+  .thesis-year { color: #7a2820; }
+  .hero > .photo { display: none; }
+  /* Заливки на лист не печатаются: красная кнопка отпечаталась бы белым по белому,
+     поэтому в печати призыв становится обведённым, как бейдж флагмана. */
+  .btn--primary {
+    background: none !important;
+    color: #7a2820 !important;
+    border: 1px solid #7a2820;
+    box-shadow: none;
+  }
+  .badge { background: none; color: #7a2820 !important; border: 1px solid #7a2820; }
+  .brand-mark { box-shadow: none; }
+  .timeline-item::before { background: #777; }
+  .timeline-item--final::before { background: #7a2820; box-shadow: none; }
+  .callout { background: none; }
+  .tile { padding: 14pt 0 0; border-top: 2px solid #7a2820; }
+  .card, .tile, .route__node, .timeline-item, .milestone, .formula-part, .fmt, .stat,
+  .case, .contacts, .section-head, .checklist li, .numbered li, .photo { break-inside: avoid; page-break-inside: avoid; }
+  .section-head { break-after: avoid-page; page-break-after: avoid; }
+  h2, h3, h4 { break-after: avoid; page-break-after: avoid; }
+  .grid--4 { grid-template-columns: repeat(2, 1fr); }
+  .grid--3 { grid-template-columns: repeat(3, 1fr); }
+  .contacts { display: grid; grid-template-columns: 180px 1fr; }
+  .copy-btn, .qr__note { display: none !important; }
+  .cta-bar { break-inside: avoid; page-break-inside: avoid; border-color: #bbb; }
+  .stats, .route__nodes, .timeline { grid-template-columns: repeat(3, 1fr); }
+  .stats .stat { border-bottom: none; padding: 20pt 16pt 16pt 0; }
+  .stats .stat + .stat { padding-left: 16pt; border-left: 1px solid #bbb; }
+  .stats--cards .stat { padding: 18pt; border-left: none; }
+  .stats--cards .stat-num { white-space: normal; }
+  .qr img { width: 160px; height: 160px; }
+  /* Карусели → сетка */
+  .carousel__track { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12pt; overflow: visible; scroll-snap-type: none; padding: 0; }
+  .carousel--mobile .carousel__track { grid-template-columns: repeat(2, 1fr); }
+  .proof { grid-template-columns: repeat(2, 1fr); }
+  .shot { break-inside: avoid; page-break-inside: avoid; }
+  .shot img { border-color: #bbb; }
+  .real { break-inside: avoid; page-break-inside: avoid; }
+  .real img { border-color: #bbb; }
+  .real-group { gap: 10pt; }
+  .case-story { break-inside: avoid; page-break-inside: avoid; border-color: #bbb; background: #fff; padding: 12pt 14pt; }
+  .case-story__col { border-top-color: #bbb; }
+  .case-story__col--result { border-top-color: #7a2820; }
+  .carousel__track > * { flex: none; width: auto; min-width: 0; }
+  .case-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 5pt 9pt; }
+  .case-metrics > div:last-child { grid-column: 1 / -1; }
+  .case-metrics dt { font-size: 8.5pt; }
+  .case-metrics dd { font-size: 15pt; overflow-wrap: anywhere; }
+  .checklist li, .numbered li, .milestone { min-height: 0; }
+  /* Лента статична, без дубля */
+  .ticker { padding: 8pt 0; border-color: #bbb; }
+  .ticker__inner { animation: none !important; width: auto; }
+  .ticker__list { flex: 0 1 100%; min-width: 0; flex-wrap: wrap; row-gap: 6pt; }
+  .ticker__list--clone { display: none; }
+  .ticker__list li { color: #111 !important; }
+  /* Фото не заливают лист */
+  .photo { background: #f2f2f0 !important; border: 1px solid #bbb; }
+  .photo-banner .photo { aspect-ratio: auto; height: 140pt; }
+  .photo--missing { background: #f2f2f0 !important; }
+  .photo--missing::before { opacity: 0.35; }
+  .photo--missing::after { color: #444; border-color: #7a2820; }
+  /* Плашка остаётся на кадре, но печатается плотной белой: текст поверх фото читается */
+  .photo__cap { padding: 4pt 8pt; color: #111; border: 1px solid #bbb !important; }
+  .photo__cap::before { background: #7a2820; }
+  .route__num, .formula-op, .numbered li::before, .milestone::before, .eyebrow, .eyebrow--light { color: #7a2820 !important; }
+  .eyebrow::before { background: #7a2820 !important; }
+}
