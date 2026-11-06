@@ -1,0 +1,589 @@
+/* styles.css — мир «Экспортный пакет документов».
+ *
+ * Каждая глава — бланк из многослойного комплекта: голубой коносамент, белые карточки,
+ * жёлтый маршрутный лист, розовая спецификация. Тёмно-синяя линия граф и полей,
+ * двуязычные подписи граф, номера и значения — табличным моноширинным (это данные, а не
+ * костюм), заголовки — системный Song/Ming, как на настоящих формах. Красный — только
+ * штамп-действие. Стекла, свечений и градиентов нет.
+ *
+ * Шрифты только системные: внешние в КНР не грузятся (PRODUCT.md). Ниже 14px текста нет,
+ * кроме печати. Цвета — только токенами :root. */
+
+/* Шрифт заголовков: подмножество Noto Serif SC Bold (OFL, assets/fonts/OFL.txt) только со знаками
+   заголовков — scripts/build-font.py. Лежит рядом с сайтом: на китайском Android системного Song нет,
+   а внешние шрифты из КНР не грузятся. Первый кадр рисуется системным Song/гротеском (swap). */
+@font-face {
+  font-family: "EB Song";
+  src: url("assets/fonts/eb-song-bold.woff2") format("woff2");
+  font-weight: 600 700;
+  font-display: swap;
+}
+
+:root {
+  --ink: #18223a;            /* основной текст: сине-чёрные чернила */
+  --ink-2: #3a4763;          /* вторичный текст — на всех бумагах ≥ 7:1 */
+  --line: #1f3561;           /* линии граф и рамки бланков */
+  --line-soft: rgba(31, 53, 97, 0.26);
+  --paper-blue: #dce8f4;     /* копия 1: коносамент, ответный бланк */
+  --paper-white: #f8fafc;    /* холодная белая — карточки, график, вопросы */
+  --paper-sand: #f3e9bf;     /* жёлтая копия: маршрутный лист */
+  --paper-pink: #f6e0e5;     /* розовая копия: спецификация условий */
+  --field: rgba(255, 255, 255, 0.5); /* заполненная графа поверх бумаги */
+  --folder: #1b2c4f;         /* корешок папки: шапка и подвал */
+  --folder-ink: #e8eef8;
+  --stamp: #c3112b;          /* штамп — единственный акцент и единственное действие */
+  --stamp-deep: #9c0d22;
+  --stamp-wash: rgba(195, 17, 43, 0.07);
+  --focus: #1f6feb;
+
+  --font-song: "EB Song", "Songti SC", "STSong", "Noto Serif CJK SC", "Noto Serif SC", "Source Han Serif SC", "Source Han Serif CN", SimSun, serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB",
+    "Microsoft YaHei", "Noto Sans SC", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+
+  --max: 1180px;
+  --gutter: clamp(16px, 4vw, 48px);
+  --sheet-y: clamp(48px, 6vw, 80px);
+  --fs-label: 14px;
+  --folder-h: 60px;
+}
+/* Кириллице нужен Song с кириллицей: системный Songti её не держит, берём классику форм */
+html[lang="ru"] { --font-song: "Times New Roman", "Noto Serif", "PT Serif", serif; }
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: calc(var(--folder-h) + 8px); }
+body {
+  margin: 0;
+  background: var(--paper-white);
+  color: var(--ink);
+  font: 17px/1.7 var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  font-variant-numeric: lining-nums;
+}
+h1, h2, h3 { margin: 0; font-family: var(--font-song); font-weight: 700; color: var(--ink); line-height: 1.15; text-wrap: balance; }
+p, dl, dd, ol, ul, figure { margin: 0; }
+ol, ul { padding: 0; list-style: none; }
+img { display: block; max-width: 100%; height: auto; }
+a { color: inherit; }
+::selection { background: var(--stamp); color: #fff; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+:lang(zh) p, :lang(zh) dd, :lang(zh) li, :lang(zh) figcaption { line-break: strict; text-wrap: pretty; }
+
+.skip { position: absolute; left: 12px; top: -48px; z-index: 30; padding: 8px 14px; background: var(--folder); color: #fff; }
+.skip:focus { top: 8px; }
+
+/* ---------- Корешок папки: шапка ---------- */
+.folder {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--folder);
+  color: var(--folder-ink);
+}
+.folder__inner {
+  max-width: var(--max);
+  margin: 0 auto;
+  height: var(--folder-h);
+  padding: 0 var(--gutter);
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+.folder__brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; font: 600 17px/1 var(--font-song); color: #fff; white-space: nowrap; }
+.folder__brand img { background: #fff; border-radius: 4px; padding: 2px; }
+.folder__nav { display: flex; gap: 22px; margin-left: auto; }
+.folder__nav a { font-size: 15px; text-decoration: none; color: var(--folder-ink); padding: 6px 0; border-bottom: 2px solid transparent; }
+.folder__nav a:hover, .folder__nav a[aria-current="true"] { color: #fff; border-bottom-color: var(--stamp); }
+.folder__actions { display: flex; align-items: center; gap: 12px; }
+.lang {
+  font: 500 14px/1 var(--font-sans);
+  color: var(--folder-ink);
+  background: transparent;
+  border: 1px solid rgba(232, 238, 248, 0.45);
+  border-radius: 4px;
+  padding: 9px 12px;
+  cursor: pointer;
+}
+.lang:hover { border-color: #fff; color: #fff; }
+.folder__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 4px;
+  background: var(--stamp);
+  color: #fff;
+  font: 600 15px/1 var(--font-sans);
+  text-decoration: none;
+  box-shadow: inset 0 0 0 2px var(--stamp), inset 0 0 0 3px rgba(255, 255, 255, 0.55);
+}
+.folder__cta:hover { background: var(--stamp-deep); }
+
+/* ---------- Бланк: общий каркас главы ---------- */
+.sheet { position: relative; padding: var(--sheet-y) 0; }
+.sheet + .sheet { border-top: 1px solid var(--line-soft); }
+/* Перфорация между листами комплекта: ряд точек по линии отрыва */
+.sheet + .sheet::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -4px;
+  height: 7px;
+  background: radial-gradient(circle, var(--line-soft) 1.6px, transparent 2px) 0 50% / 14px 7px repeat-x;
+}
+.sheet--blue {
+  background-color: var(--paper-blue);
+  /* линовка бланковой бумаги — едва заметная, держит ощущение формы на пустых местах */
+  background-image: linear-gradient(rgba(31, 53, 97, 0.06) 1px, transparent 1px);
+  background-size: 100% 32px;
+}
+.sheet--white { background: var(--paper-white); }
+.sheet--sand { background: var(--paper-sand); }
+.sheet--pink { background: var(--paper-pink); }
+.sheet__inner { max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter); }
+/* Первый экран: бланк сразу под шапкой, штамп обязан попасть в первый кадр */
+#hero { padding-top: clamp(20px, 3vw, 40px); }
+
+/* Шапка документа: название zh + EN и номер, под ней двойная линия, как на форме */
+.doc-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 12px;
+  border-bottom: 4px double var(--line);
+  margin-bottom: clamp(28px, 4vw, 44px);
+}
+.doc-head__title { font: 700 22px/1.2 var(--font-song); color: var(--line); }
+.doc-head__en { margin-left: 10px; font: 500 14px/1 var(--font-mono); letter-spacing: 0.14em; color: var(--ink-2); }
+.doc-head__no { font: 500 14px/1 var(--font-mono); letter-spacing: 0.06em; color: var(--ink-2); white-space: nowrap; }
+/* Заголовок листа несёт и линейку формы: двойная черта под ним вместо отдельной шапки документа */
+.sheet__h { font-size: clamp(30px, 4.2vw, 48px); padding-bottom: 14px; border-bottom: 4px double var(--line); }
+.sheet__lead { margin-top: 16px; max-width: 64ch; color: var(--ink-2); font-size: 18px; }
+.note { margin-top: 20px; color: var(--ink-2); font-size: 15px; }
+
+/* Графа: подпись мелким двуязычным капсом и значение */
+.field { padding: 14px 18px 18px; }
+.field__label {
+  font: 500 var(--fs-label)/1.3 var(--font-sans);
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+  margin-bottom: 8px;
+}
+.field__value { font-size: 18px; color: var(--ink); }
+.field__value--strong { font: 600 clamp(18px, 1.8vw, 22px)/1.35 var(--font-sans); }
+.field__note { margin-top: 10px; color: var(--ink-2); font-size: 15px; }
+
+/* ---------- 1. Коносамент ---------- */
+.bl {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-areas:
+    "ship ship ship ship ship port port port port port port port"
+    "cons cons cons cons cons cons cons cons sign sign sign sign"
+    "desc desc desc desc desc desc desc desc noti noti noti noti"
+    "mark mark mark mark mark mark mark mark mark mark mark mark";
+  border: 2px solid var(--line);
+  background: var(--field);
+}
+.bl > .field { border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.bl__ship { grid-area: ship; }
+.bl__port { grid-area: port; border-right: 0 !important; }
+.bl__cons { grid-area: cons; padding-top: 18px; padding-bottom: 26px; }
+.bl__sign { grid-area: sign; border-right: 0 !important; display: flex; flex-direction: column; align-items: flex-start; gap: 18px; }
+.bl__desc { grid-area: desc; }
+.bl__notify { grid-area: noti; border-right: 0 !important; display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+.bl__marks { grid-area: mark; border-right: 0 !important; border-bottom: 0 !important; }
+/* Перенос только там, где в строке стоит U+200B (после «贵司的»): иначе Song рвёт «俄/罗斯» */
+.bl__title { font-size: clamp(44px, 6.6vw, 88px); line-height: 1.08; letter-spacing: 0.01em; word-break: keep-all; }
+html[lang="ru"] .bl__title { font-size: clamp(40px, 5.6vw, 76px); max-width: 16ch; }
+.bl__lead { font-size: clamp(18px, 1.6vw, 21px); line-height: 1.6; max-width: 40ch; }
+.marks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.mark { display: flex; align-items: baseline; gap: 12px; padding-right: 16px; }
+.mark + .mark { border-left: 1px solid var(--line-soft); padding-left: 18px; }
+/* Значения графы — того же кегля, что и другие графы: это строка бланка, а не витрина цифр */
+.mark__v { font: 600 21px/1.3 var(--font-mono); color: var(--line); font-variant-numeric: tabular-nums lining-nums; }
+.mark__l { font-size: 17px; line-height: 1.4; color: var(--ink); }
+
+/* Штамп — действие. Двойная рамка красными чернилами, лёгкий наклон оттиска */
+.stamp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  padding: 12px 22px;
+  border: 4px double var(--stamp);
+  border-radius: 6px;
+  color: var(--stamp);
+  background: rgba(255, 255, 255, 0.55);
+  font: 700 20px/1.25 var(--font-song);
+  letter-spacing: 0.06em;
+  text-align: center;
+  text-decoration: none;
+  transform: rotate(-2deg);
+  transition: background-color 0.18s ease-out, color 0.18s ease-out, transform 0.18s ease-out;
+  cursor: pointer;
+}
+.stamp:hover { background: var(--stamp); color: #fff; transform: rotate(-2deg) scale(1.02); }
+.stamp:active { transform: rotate(-2deg) scale(0.98); }
+/* Единственный авторский момент движения: оттиск ложится на коносамент при загрузке.
+   Штамп видим с первого кадра — меняется только масштаб и угол, без исчезновения */
+.stamp--land { animation: stamp-land 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both; }
+@keyframes stamp-land {
+  from { transform: rotate(-9deg) scale(1.22); }
+  to { transform: rotate(-2deg) scale(1); }
+}
+.link-arrow { font-size: 16px; color: var(--line); text-underline-offset: 4px; text-decoration-thickness: 1px; }
+.link-arrow:hover { color: var(--stamp); }
+
+/* ---------- 2. Карточка ответственного ---------- */
+.real-group { margin-top: clamp(28px, 4vw, 44px); display: grid; gap: 24px; grid-template-columns: repeat(var(--real-cols, 3), minmax(0, 1fr)); align-items: start; }
+.real-group--lead { --real-cols: 1; }
+.real-group--docs { --real-cols: 2; }
+.real-group--wide { --real-cols: 1; }
+/* Одна выжившая фигура в группе материалов — во всю ширину, без пустой половины */
+.real-group--docs:has(> .real:only-child) { --real-cols: 1; }
+.real-group--docs:has(> .real:only-child) .real img { aspect-ratio: 16 / 8; object-fit: cover; }
+.real img { width: 100%; border: 1px solid var(--line-soft); }
+.real figcaption { margin-top: 12px; font-size: 15px; color: var(--ink-2); }
+.real-group--people .real img { aspect-ratio: 4 / 5; object-fit: cover; }
+.real-group--people .real figcaption { border-top: 1px solid var(--line); padding-top: 10px; }
+.real__name { display: block; font: 700 20px/1.3 var(--font-song); color: var(--ink); }
+.real__role { display: block; margin-top: 2px; font-size: 15px; color: var(--ink-2); }
+
+/* Руководитель: фото вклеено в бланк, справа графы «имя / должность / справка» */
+.real--lead {
+  display: grid;
+  grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
+  border: 2px solid var(--line);
+  background: #fff;
+}
+.real--lead img {
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border: 0;
+  border-right: 1px solid var(--line);
+}
+.real--lead figcaption { margin: 0; display: grid; grid-template-rows: auto auto 1fr; color: var(--ink); }
+.real--lead .real__name,
+.real--lead .real__role,
+.real--lead .real__bio { padding: 16px 22px 18px; border-bottom: 1px solid var(--line-soft); }
+.real--lead .real__bio { border-bottom: 0; font-size: 17px; line-height: 1.75; max-width: 62ch; }
+.real--lead .real__name { font-size: clamp(26px, 2.6vw, 34px); }
+.real--lead .real__role { font: 600 18px/1.4 var(--font-sans); color: var(--ink); margin-top: 0; }
+.real--lead [data-label]::before {
+  content: attr(data-label);
+  display: block;
+  margin-bottom: 6px;
+  font: 500 var(--fs-label)/1.3 var(--font-sans);
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+}
+
+/* Приложение 1 — фото, вложенное в комплект: белое поле и номер приложения */
+.photo { position: relative; }
+.photo img { width: 100%; height: 100%; object-fit: cover; }
+.attach {
+  margin-top: 28px;
+  padding: 12px 12px 16px;
+  background: #fff;
+  border: 1px solid var(--line-soft);
+  box-shadow: 0 10px 24px -14px rgba(24, 34, 58, 0.45);
+}
+.attach img { aspect-ratio: 16 / 8; object-position: 50% 22%; }
+.attach figcaption { margin-top: 12px; font-size: 15px; color: var(--ink-2); }
+.photo--missing { min-height: 160px; background: var(--stamp-wash); }
+.photo--missing img { display: none; }
+.photo--missing::after { content: attr(data-label) " " attr(data-slot) ".jpg"; position: absolute; inset: 12px; font: 14px/1.4 var(--font-mono); color: var(--ink-2); }
+
+/* ---------- 3. Маршрутный лист ---------- */
+.steps { margin-top: clamp(28px, 4vw, 40px); border: 2px solid var(--line); background: var(--field); }
+.step {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 260px) minmax(0, 1fr);
+  align-items: stretch;
+}
+.step + .step { border-top: 1px solid var(--line); }
+.step__no {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid var(--line);
+  font: 600 30px/1 var(--font-mono);
+  color: var(--line);
+}
+.step__img { border-right: 1px solid var(--line); aspect-ratio: 16 / 10; }
+/* Иллюстрации-генерации ложатся в бумагу листа, как копия: приглушённый цвет и умножение
+   на тон бумаги. Настоящие кадры (склад, люди, кабинеты) не обрабатываются */
+.step__img img, .fmt__img:not([data-slot="fmt-distribution"]) img { filter: saturate(0.55) contrast(0.95); mix-blend-mode: multiply; }
+.step__text { padding: 20px 24px; }
+.step__text h3 { font-size: 23px; }
+.step__text p { margin-top: 8px; max-width: 60ch; color: var(--ink-2); }
+
+.route-split { margin-top: 32px; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 24px; align-items: start; }
+.box { border: 2px solid var(--line); background: var(--field); padding: 18px 22px 22px; }
+.box__h { font-size: 21px; padding-bottom: 12px; margin-bottom: 14px; border-bottom: 1px solid var(--line); }
+.checklist li { position: relative; padding: 8px 0 8px 34px; }
+.checklist li + li { border-top: 1px solid var(--line-soft); }
+/* Отметка в графе: квадрат и галочка — нарисованы, не символ шрифта */
+.checklist li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 13px;
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid var(--line);
+  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M4 10.5l4 4 8-9' fill='none' stroke='%23c3112b' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 18px no-repeat;
+}
+.report__lead { color: var(--ink-2); font-size: 15px; margin-bottom: 14px; }
+.report__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+.report__grid > div { padding: 12px 14px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); background: #fff; }
+.report__grid dt { font-size: var(--fs-label); color: var(--ink-2); line-height: 1.35; }
+.report__grid dd { margin-top: 6px; }
+/* Сумма с единицей не рвётся: text-wrap у :lang(zh) dd иначе перебивает nowrap специфичностью */
+.report__grid dd.num { text-wrap: nowrap; white-space: nowrap; }
+.report__grid > .report__more { grid-column: 1 / -1; background: transparent; }
+.report__more dd { margin: 0; font-size: 15px; color: var(--ink-2); }
+.num { white-space: nowrap; font: 600 clamp(17px, 1.5vw, 22px)/1.15 var(--font-mono); color: var(--line); font-variant-numeric: tabular-nums lining-nums; letter-spacing: -0.01em; }
+.report__tbd { font-size: 15px; color: var(--ink-2); }
+
+/* ---------- 4. Приложения ---------- */
+.proof-shots { margin-top: clamp(28px, 4vw, 40px); }
+.shots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 24px; }
+.shot__zoom {
+  position: relative;
+  display: block;
+  padding: 10px;
+  background: #fff;
+  border: 1px solid var(--line-soft);
+  box-shadow: 0 10px 24px -16px rgba(24, 34, 58, 0.5);
+  cursor: zoom-in;
+}
+.shot__zoom img { width: 100%; }
+.shot__stamp {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  padding: 3px 10px;
+  border: 3px double var(--stamp);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--stamp);
+  font: 700 14px/1.3 var(--font-song);
+  letter-spacing: 0.08em;
+  transform: rotate(4deg);
+}
+.shot figcaption { margin-top: 12px; font-size: 15px; color: var(--ink-2); }
+/* Оттиски ставились рукой: у каждого свой угол */
+.shot:nth-child(2) .shot__stamp { transform: rotate(-3deg); }
+.shot:nth-child(3) .shot__stamp { transform: rotate(2deg); }
+.shot:nth-child(4) .shot__stamp { transform: rotate(-5deg); }
+
+/* ---------- 5. Спецификация условий ---------- */
+.formats {
+  margin-top: clamp(28px, 4vw, 40px);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: repeat(3, auto);
+  border: 2px solid var(--line);
+  background: var(--field);
+}
+.fmt { display: grid; grid-template-rows: subgrid; grid-row: span 3; padding: 0 0 18px; }
+.fmt + .fmt { border-left: 1px solid var(--line); }
+.fmt__head { display: flex; flex-direction: column; }
+.fmt__img { border-bottom: 1px solid var(--line); }
+.fmt__img img { aspect-ratio: 16 / 9; height: auto; }
+.fmt__no { padding: 14px 18px 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font: 600 22px/1 var(--font-mono); color: var(--line); }
+.fmt__tag { font: 600 14px/1.3 var(--font-sans); color: var(--line); border: 1px solid var(--line); padding: 2px 8px; }
+.fmt__tag--stamp { color: var(--stamp); border: 3px double var(--stamp); border-radius: 4px; font-family: var(--font-song); transform: rotate(-3deg); }
+.fmt h3 { padding: 8px 18px 0; font-size: 24px; }
+.fmt__desc { padding: 10px 18px 14px; font-size: 15.5px; color: var(--ink-2); }
+.fmt__facts { margin: 0 18px; border-top: 1px solid var(--line); padding-top: 12px; font-size: 15px; }
+.fmt__facts dt { font-size: var(--fs-label); color: var(--ink-2); margin-top: 10px; }
+.fmt__facts dt:first-child { margin-top: 0; }
+.fmt__facts dd { margin-top: 2px; font-weight: 600; line-height: 1.5; }
+.fmt--flagship { background: rgba(255, 255, 255, 0.6); box-shadow: inset 0 0 0 2px var(--stamp); }
+.pay { margin-top: 24px; }
+.pay__rows { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+.pay__rows > div { padding: 4px 22px 4px 0; }
+.pay__rows > div + div { padding: 4px 0 4px 22px; border-left: 1px solid var(--line-soft); }
+.pay__rows dt { font: 700 18px/1.4 var(--font-song); }
+.pay__rows dd { margin-top: 6px; color: var(--ink-2); }
+
+/* ---------- 6. График ---------- */
+.timeline { margin-top: clamp(28px, 4vw, 40px); border: 2px solid var(--line); }
+.timeline li { display: grid; grid-template-columns: 180px minmax(0, 1fr); }
+.timeline li + li { border-top: 1px solid var(--line); }
+.timeline li > p { padding: 18px 22px; }
+.timeline li > p + p { max-width: 70ch; color: var(--ink-2); }
+.timeline__day { border-right: 1px solid var(--line); font: 600 22px/1.3 var(--font-mono); color: var(--line); background: var(--paper-blue); }
+
+/* ---------- 7. Вопросы ---------- */
+.qa { margin-top: clamp(24px, 3vw, 36px); border-top: 2px solid var(--line); }
+.qa details { border-bottom: 1px solid var(--line-soft); }
+.qa summary {
+  position: relative;
+  list-style: none;
+  cursor: pointer;
+  padding: 18px 52px 18px 0;
+  font: 600 18px/1.45 var(--font-sans);
+}
+.qa summary::-webkit-details-marker { display: none; }
+/* Плюс-минус — две линии, нарисованные рамками */
+.qa summary::before, .qa summary::after {
+  content: "";
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  width: 16px;
+  height: 0;
+  border-top: 2px solid var(--line);
+}
+.qa summary::after { transform: rotate(90deg); transition: transform 0.2s ease-out; }
+.qa details[open] > summary::after { transform: rotate(0deg); }
+.qa summary:hover { color: var(--stamp); }
+.qa details > p { padding: 0 52px 20px 0; max-width: 72ch; color: var(--ink-2); }
+.qa__more > summary { color: var(--line); }
+.qa__more .qa { margin: 0 0 8px; border-top: 0; padding-left: 20px; border-left: 1px solid var(--line-soft); }
+
+/* ---------- 8. Ответный бланк ---------- */
+.reply { margin-top: clamp(24px, 3vw, 36px); display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 28px; align-items: start; }
+.reply__fields { border: 2px solid var(--line); background: var(--field); display: grid; grid-template-columns: 1fr 1fr; }
+.reply__fields > .field { border-bottom: 1px solid var(--line); }
+.reply__fields > .field:first-child { grid-column: 1 / -1; }
+.reply__fields > .field:nth-child(2) { grid-column: 1 / -1; }
+.reply__fields > .field:nth-child(3) { border-right: 1px solid var(--line); }
+.reply__fields > .field:nth-last-child(-n + 2) { border-bottom: 0; }
+.wechat { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 18px; }
+.wechat .stamp { transform: none; }
+.wechat .stamp:hover { transform: scale(1.02); }
+.wechat__url { flex: 1 1 100%; font: 14px/1.5 var(--font-mono); color: var(--ink-2); word-break: break-all; text-underline-offset: 3px; }
+.copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: #fff;
+  color: var(--line);
+  font: 500 15px/1 var(--font-sans);
+  cursor: pointer;
+}
+.copy:hover { border-color: var(--stamp); color: var(--stamp); }
+.qr { background: #fff; border: 2px solid var(--line); padding: 16px; text-align: left; }
+.qr img { width: 100%; height: auto; image-rendering: pixelated; }
+.qr figcaption { margin-top: 12px; font-size: 15px; }
+.qr__note { margin-top: 6px; font-size: 14px; color: var(--ink-2); }
+
+/* ---------- Подвал ---------- */
+.foot { background: var(--folder); color: var(--folder-ink); }
+.foot__inner { max-width: var(--max); margin: 0 auto; padding: 22px var(--gutter); display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 15px; }
+
+/* ---------- Липкий призыв: только телефон ---------- */
+.sticky-cta { display: none; }
+
+/* ---------- Адаптив ---------- */
+@media (max-width: 1024px) {
+  .formats { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(6, auto); }
+  .fmt:nth-child(3) { border-left: 0; }
+  .fmt:nth-child(n + 3) { border-top: 1px solid var(--line); }
+  .route-split { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 860px) {
+  .folder__nav { display: none; }
+  .folder__actions { margin-left: auto; }
+  .bl {
+    grid-template-columns: 1fr;
+    grid-template-areas: "cons" "desc" "sign" "port" "ship" "mark" "noti";
+  }
+  .bl > .field { border-right: 0 !important; }
+  .bl__marks { border-bottom: 1px solid var(--line) !important; }
+  .bl__notify { border-bottom: 0 !important; }
+  .real--lead { grid-template-columns: 1fr; }
+  .real--lead img { border-right: 0; border-bottom: 1px solid var(--line); max-height: 520px; }
+  .step { grid-template-columns: 56px minmax(0, 1fr); }
+  .step__img { grid-column: 2; grid-row: 1; border-right: 0; border-bottom: 1px solid var(--line); }
+  .step__no { grid-row: 1 / span 2; }
+  .step__text { grid-column: 2; }
+  .shots { grid-template-columns: 1fr; }
+  .real-group--docs { --real-cols: 1; }
+  .reply { grid-template-columns: 1fr; }
+  .qr { max-width: 280px; }
+  .pay__rows { grid-template-columns: 1fr; }
+  .pay__rows > div + div { border-left: 0; padding: 14px 0 4px; border-top: 1px solid var(--line-soft); }
+  .timeline li { grid-template-columns: 1fr; }
+  .timeline__day { border-right: 0; border-bottom: 1px solid var(--line-soft); padding-bottom: 10px !important; }
+
+  .sticky-cta {
+    position: fixed;
+    z-index: 15;
+    left: 16px;
+    right: 16px;
+    bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 52px;
+    border-radius: 6px;
+    background: var(--stamp);
+    color: #fff;
+    font: 700 17px/1.2 var(--font-song);
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    box-shadow: inset 0 0 0 3px var(--stamp), inset 0 0 0 4px rgba(255, 255, 255, 0.6), 0 10px 24px -10px rgba(24, 34, 58, 0.55);
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s, visibility 0s;
+  }
+  .sticky-cta.is-hidden { transform: translateY(calc(100% + 28px)); opacity: 0; visibility: hidden; transition: transform 0.2s ease-in, opacity 0.2s, visibility 0s 0.2s; }
+  .foot { padding-bottom: 80px; }
+}
+
+@media (max-width: 600px) {
+  body { font-size: 16px; }
+  .doc-head { flex-wrap: wrap; row-gap: 4px; }
+  .doc-head__en { display: block; margin: 6px 0 0; }
+  .marks { grid-template-columns: 1fr; }
+  .mark + .mark { border-left: 0; padding-left: 0; border-top: 1px solid var(--line-soft); margin-top: 8px; padding-top: 8px; }
+  .formats { grid-template-columns: 1fr; grid-template-rows: none; }
+  .fmt { grid-row: auto; grid-template-rows: none; display: block; }
+  .fmt + .fmt { border-left: 0; border-top: 1px solid var(--line); }
+  .report__grid { grid-template-columns: 1fr 1fr; }
+  .report__grid > div:nth-child(3) { grid-column: 1 / -1; }
+  .reply__fields { grid-template-columns: 1fr; }
+  .reply__fields > .field { grid-column: 1 / -1; border-right: 0 !important; }
+  .reply__fields > .field:nth-last-child(2) { border-bottom: 1px solid var(--line); }
+  .folder__brand span { font-size: 15px; }
+  .folder__cta span { display: none; }
+  .folder__cta { width: 44px; min-height: 44px; padding: 0; justify-content: center; }
+  .lang { min-height: 44px; }
+  .qa summary { font-size: 17px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* ---------- Печать: комплект на белой бумаге, листы с новой страницы ---------- */
+@media print {
+  @page { margin: 14mm; }
+  body { font-size: 10.5pt; background: #fff; }
+  .folder, .sticky-cta, .skip, .copy, .lang, .link-arrow, .qr__note { display: none !important; }
+  .sheet { padding: 0 0 10mm; background: #fff !important; }
+  .sheet + .sheet::before { display: none; }
+  .sheet + .sheet { border-top: 0; break-before: page; }
+  .stamp, .stamp--land { animation: none; transform: none; background: #fff; }
+  .shot__zoom, .attach { box-shadow: none; }
+  /* На белом листе умножать не на что, а фильтр заставляет Chrome класть картинку в PDF несжатой */
+  .step__img img, .fmt__img img { mix-blend-mode: normal; filter: none; }
+  .qa details > p { display: block; }
+  .qa details { break-inside: avoid; }
+  .step, .fmt, .shot, .real--lead, .timeline li { break-inside: avoid; }
+}

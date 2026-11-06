@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-lang="zh" itemscope itemtype="https://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Светлый бланк — единственная тема: WeChat на Android иначе затемняет страницу сам -->
+  <meta name="color-scheme" content="light">
+  <title data-i18n="meta.title">贵司的俄罗斯事业部 — EastBridge · 东桥</title>
+  <meta name="description" data-i18n-attr="content:meta.description" content="EastBridge · 东桥：贵司的俄罗斯事业部。我们在 Wildberries、Ozon 与 Yandex Market 销售中国制造企业的产品：本地团队、仓库与每周报表，贵司无需在俄设立机构。">
+  <!-- Превью ссылки в WeChat / мессенджерах: статично на китайском; абсолютные URL — только адрес сайта и og:image -->
+  <link rel="canonical" href="https://east-bridge.asia/">
+  <meta property="og:url" content="https://east-bridge.asia/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="EastBridge · 东桥">
+  <meta property="og:title" content="EastBridge 东桥 · 贵司的俄罗斯事业部">
+  <meta property="og:description" content="我们在 Wildberries、Ozon 与 Yandex Market 销售中国制造企业的产品：本地团队、仓库与每周报表，贵司无需在俄设立机构。">
+  <meta property="og:image" content="https://east-bridge.asia/assets/brand/og-card.png">
+  <meta itemprop="name" content="EastBridge 东桥 · 贵司的俄罗斯事业部">
+  <meta itemprop="description" content="我们在 Wildberries、Ozon 与 Yandex Market 销售中国制造企业的产品：本地团队、仓库与每周报表，贵司无需在俄设立机构。">
+  <meta itemprop="image" content="https://east-bridge.asia/assets/brand/og-card.png">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%231b2c4f'/%3E%3Ctext x='32' y='47' font-size='42' text-anchor='middle' fill='%23ffffff' font-family='Songti SC,Noto Serif SC,SimSun,serif'%3E%E6%A1%A5%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip" href="#hero" data-i18n="nav.sections">章节导航</a>
+
+  <!-- Шапка — корешок папки с документами: бренд, четыре раздела, язык, призыв -->
+  <header class="folder">
+    <div class="folder__inner">
+      <a class="folder__brand" href="#hero">
+        <img src="assets/brand/logo-mark.svg" width="28" height="28" alt="">
+        <span data-config="brandFull">EastBridge · 东桥</span>
+      </a>
+      <nav class="folder__nav" data-i18n-attr="aria-label:nav.sections" aria-label="章节导航">
+        <a href="#route" data-i18n="nav.route">流程</a>
+        <a href="#proof" data-i18n="nav.proof">附件</a>
+        <a href="#terms" data-i18n="nav.terms">条款</a>
+        <a href="#contacts" data-i18n="nav.contacts">联系</a>
+      </nav>
+      <div class="folder__actions">
+        <button type="button" class="lang" id="lang-toggle" data-i18n="nav.switch">Русский</button>
+        <a class="folder__cta" href="#contacts" data-i18n-attr="aria-label:nav.ctaLabel" aria-label="预约会面或视频通话">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M21 11.5a7.5 7.5 0 0 1-7.5 7.5H8l-4.5 3 1.3-4.4A7.5 7.5 0 1 1 21 11.5z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+          <span data-i18n="nav.cta">预约会面</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- 1. Коносамент: первый экран. Фабрика — в графе «Отправитель», мы — «Получатель» -->
+    <section class="sheet sheet--blue" id="hero" aria-labelledby="hero-title">
+      <div class="sheet__inner">
+        <div class="doc-head">
+          <p class="doc-head__title"><span data-i18n="bl.title">提单</span> <span class="doc-head__en">BILL OF LADING</span></p>
+          <p class="doc-head__no"><span data-i18n="doc.no">编号</span> EB-2026-0001</p>
+        </div>
+        <div class="bl">
+          <div class="field bl__ship">
+            <p class="field__label" data-i18n="bl.shipper">发货人 · Shipper</p>
+            <p class="field__value" data-i18n="bl.shipperV">贵司（中国制造企业）</p>
+          </div>
+          <div class="field bl__port">
+            <p class="field__label" data-i18n="bl.port">卸货港 · Port of discharge</p>
+            <p class="field__value field__value--strong" data-i18n="bl.portV">Wildberries · Ozon · Yandex Market</p>
+          </div>
+          <div class="field bl__cons">
+            <p class="field__label" data-i18n="bl.consignee">收货人 · Consignee</p>
+            <h1 class="bl__title" id="hero-title" data-i18n="hero.title">贵司的​俄罗斯事业部</h1>
+          </div>
+          <div class="field bl__desc">
+            <p class="field__label" data-i18n="bl.desc">货物描述 · Description</p>
+            <p class="bl__lead" data-i18n="hero.lead">我们在俄罗斯三大电商平台销售贵司产品：本地团队、仓库与每周报表，贵司无需在俄设立机构。</p>
+          </div>
+          <div class="field bl__sign">
+            <p class="field__label" data-i18n="bl.sign">签章 · Signature</p>
+            <a class="stamp stamp--land" href="#contacts" data-i18n="hero.cta">预约会面 · 视频通话</a>
+            <a class="link-arrow" href="#terms" data-i18n="hero.cta2">查看合作条款</a>
+          </div>
+          <div class="field bl__notify">
+            <p class="field__label" data-i18n="bl.notify">通知方 · Notify party</p>
+            <p class="field__value" data-config="brandFull">EastBridge · 东桥</p>
+            <a class="link-arrow" href="#contacts" data-i18n="bl.notifyCta">微信预约会面，或先发送报价单</a>
+          </div>
+          <div class="field bl__marks">
+            <p class="field__label" data-i18n="bl.marks">数据 · Particulars</p>
+            <dl class="marks">
+              <div class="mark"><dt class="mark__v" data-i18n="hero.s1v">1000</dt><dd class="mark__l" data-i18n="hero.s1l">个 SKU：可同时运营的上限</dd></div>
+              <div class="mark"><dt class="mark__v" data-i18n="hero.s2v">90</dt><dd class="mark__l" data-i18n="hero.s2l">天：启动并产生首批销售</dd></div>
+              <div class="mark"><dt class="mark__v" data-i18n="hero.s3v">3</dt><dd class="mark__l" data-i18n="hero.s3l">个平台：WB · Ozon · YM</dd></div>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Карточка ответственного: директор — сразу после первого экрана (решение пользователя) -->
+    <section class="sheet sheet--white" id="people" aria-labelledby="people-h">
+      <div class="sheet__inner">
+        <h2 class="sheet__h" id="people-h" data-i18n="people.h">由谁负责贵司的事业部</h2>
+        <!-- Портрет вклеен в бланк; группа раскрывается по загрузке файла (initDeferredGroups) -->
+        <div class="real-group real-group--lead" data-real-group hidden>
+          <figure class="real real--lead" data-real="team-1"><img src="assets/real/team-1.jpg" alt="总经理亚历山大·伊诺奇金的肖像" width="1000" height="1250" data-i18n-attr="alt:real.alt.team-1"><figcaption data-ph><span class="real__name" data-i18n="real.p1name" data-i18n-attr="data-label:people.nameL" data-label="姓名 · Name">亚历山大·伊诺奇金</span><span class="real__role" data-i18n="real.p1role" data-i18n-attr="data-label:people.roleL" data-label="职务 · Position">总经理</span><span class="real__bio" data-i18n="real.p1bio" data-i18n-attr="data-label:people.bioL" data-label="简历 · Profile">深耕电子商务 15 年，在多家企业主导完成 10 余个成功项目，包括从零启动电商平台销售与重塑现有产品线。每一位合作伙伴均由他亲自负责，从首次洽谈到每周报表。</span></figcaption></figure>
+        </div>
+        <!-- Приложение 1: кадр команды на планёрке (настоящие люди, решение пользователя 06.11.2026) -->
+        <figure class="photo attach" data-slot="team-office" data-i18n-attr="data-label:photo.missing" data-label="照片位 · 请将文件放至："><img src="assets/photos/team-office.jpg" alt="团队围坐会议桌，屏幕上是店铺后台的周汇总" width="1536" height="1024" loading="lazy" data-i18n-attr="alt:photo.alt.team-office" onerror="this.closest('.photo').classList.add('photo--missing')"><figcaption><span data-i18n="photo.cap.team-office">每周例会：团队一起复盘店铺数据</span></figcaption></figure>
+        <!-- Портреты коллег: появятся, когда собственник положит файлы и впишет имена -->
+        <div class="real-group real-group--people" data-real-group hidden>
+          <figure class="real" data-real="team-2"><img src="assets/real/team-2.jpg" alt="团队成员肖像照" data-i18n-attr="alt:real.alt.team-2"><figcaption data-ph><span class="real__name" data-i18n="real.p2name">[姓名]</span><span class="real__role" data-i18n="real.p2role">[职务]</span></figcaption></figure>
+          <figure class="real" data-real="team-3"><img src="assets/real/team-3.jpg" alt="团队成员肖像照" data-i18n-attr="alt:real.alt.team-3"><figcaption data-ph><span class="real__name" data-i18n="real.p3name">[姓名]</span><span class="real__role" data-i18n="real.p3role">[职务]</span></figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Маршрутный лист: три шага, что берём на себя, образец недельного отчёта -->
+    <section class="sheet sheet--sand" id="route" aria-labelledby="route-h">
+      <div class="sheet__inner">
+        <h2 class="sheet__h" id="route-h" data-i18n="route.h">贵司生产，我们销售</h2>
+        <ol class="steps">
+          <li class="step">
+            <span class="step__no">1</span>
+            <figure class="photo step__img" data-slot="how-factory" data-i18n-attr="data-label:photo.missing" data-label="照片位 · 请将文件放至："><img src="assets/photos/how-factory.jpg" alt="生产线与打包完成的成品箱" width="1200" height="800" loading="lazy" data-i18n-attr="alt:photo.alt.how-factory" onerror="this.closest('.photo').classList.add('photo--missing')"></figure>
+            <div class="step__text"><h3 data-i18n="how.s1t">专注生产</h3><p data-i18n="how.s1b">贵司只需确保产品品质与供货稳定。俄语团队、俄罗斯法规与平台规则，不再是贵司的成本项。</p></div>
+          </li>
+          <li class="step">
+            <span class="step__no">2</span>
+            <figure class="photo step__img" data-slot="how-logistics" data-i18n-attr="data-label:photo.missing" data-label="照片位 · 请将文件放至："><img src="assets/photos/how-logistics.jpg" alt="集装箱码头，货车装载中" width="1200" height="800" loading="lazy" data-i18n-attr="alt:photo.alt.how-logistics" onerror="this.closest('.photo').classList.add('photo--missing')"></figure>
+            <div class="step__text"><h3 data-i18n="how.s2t">负责销售</h3><p data-i18n="how.s2b">选品分析、商品卡片与内容、认证与合规、仓储物流、广告投放、客服与评价管理，从上架到复购由我方全程执行。</p></div>
+          </li>
+          <li class="step">
+            <span class="step__no">3</span>
+            <figure class="photo step__img" data-slot="how-shelf" data-i18n-attr="data-label:photo.missing" data-label="照片位 · 请将文件放至："><img src="assets/photos/how-shelf.jpg" alt="手机上的电商平台橱窗与自提点包裹" width="1200" height="800" loading="lazy" data-i18n-attr="alt:photo.alt.how-shelf" onerror="this.closest('.photo').classList.add('photo--missing')"></figure>
+            <div class="step__text"><h3 data-i18n="how.s3t">透明回报</h3><p data-i18n="how.s3b">每周销售报表与财务对账，按合同约定结算。每一笔销售均有平台后台记录可核对。</p></div>
+          </li>
+        </ol>
+        <div class="route-split">
+          <div class="box">
+            <h3 class="box__h" data-i18n="route.inclH">我方负责</h3>
+            <ul class="checklist">
+              <li data-i18n="route.i1">认证与强制标识（EAC、诚实标志）</li>
+              <li data-i18n="route.i2">仓储与物流，直达平台仓库</li>
+              <li data-i18n="route.i3">商品卡片、文案与视觉</li>
+              <li data-i18n="route.i4">广告投放与价格管理</li>
+              <li data-i18n="route.i5">客服、退货与评价</li>
+              <li data-i18n="route.i6">法务、会计与税务</li>
+            </ul>
+          </div>
+          <!-- Образец отчёта на настоящих цифрах недели (кадр команды, разрешено пользователем);
+               остатки, отзывы и деньги к перечислению не выдумываем — перечислены строкой -->
+          <div class="box report">
+            <h3 class="box__h" data-i18n="report.title">周报样张</h3>
+            <p class="report__lead" data-i18n="report.lead">每周一份，五项内容。下列数字截自我方团队运营的一家店铺的一周（2026.10.29–11.04）。</p>
+            <dl class="report__grid">
+              <div><dt data-i18n="report.f1l">销量</dt><dd class="num" data-i18n="report.f1v">3,205 件</dd></div>
+              <div><dt data-i18n="report.f2l">销售额</dt><dd class="num" data-i18n="report.f2v">2,770,215 卢布</dd></div>
+              <div><dt data-i18n="report.f3l">广告费占销售额</dt><dd class="num" data-i18n="report.f3v">6.1%</dd></div>
+              <div class="report__more"><dd data-i18n="report.more">周报另含：各仓库存、评价与评分、待结算款项</dd></div>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Приложения: настоящие кабинеты и склад. Группы раскрываются по загрузке файлов -->
+    <section class="sheet sheet--white" id="proof" aria-labelledby="proof-h">
+      <div class="sheet__inner">
+        <h2 class="sheet__h" id="proof-h" data-i18n="proof.h">附件：真实后台与仓库</h2>
+        <p class="sheet__lead" data-i18n="proof.lead">截图来自我方团队运营的店铺后台：法人名称、店铺名称与账户余额已遮挡，数字未作修改。</p>
+        <div class="proof-shots" hidden>
+          <div class="shots">
+            <figure class="shot" data-shot="proof-wb-growth"><a class="shot__zoom" href="assets/proof/proof-wb-growth.jpg" target="_blank" rel="noopener"><img src="assets/proof/proof-wb-growth.jpg" alt="Wildberries 卖家后台截图：每日货款结算曲线，峰值 1 373 320 卢布" data-i18n-attr="alt:proof.alt.proof-wb-growth"><span class="shot__stamp" data-i18n="proof.stamp">原始截图</span></a><figcaption data-i18n="proof.cap.proof-wb-growth">Wildberries 后台「商品货款结算」：曲线自低位跃升，单日峰值 1,373,320 卢布</figcaption></figure>
+            <figure class="shot" data-shot="proof-ozon-day"><a class="shot__zoom" href="assets/proof/proof-ozon-day.jpg" target="_blank" rel="noopener"><img src="assets/proof/proof-ozon-day.jpg" alt="Ozon Seller 后台截图：单日下单额 1 543 050 卢布，增幅 +45,17%" data-i18n-attr="alt:proof.alt.proof-ozon-day"><span class="shot__stamp" data-i18n="proof.stamp">原始截图</span></a><figcaption data-i18n="proof.cap.proof-ozon-day">Ozon Seller「商品下单额」：9 月 7 日 1,543,050 卢布、1,759 件，较上一周期可比日（8 月 10 日）+45.17%</figcaption></figure>
+            <figure class="shot" data-shot="proof-ozon-quarter"><a class="shot__zoom" href="assets/proof/proof-ozon-quarter.jpg" target="_blank" rel="noopener"><img src="assets/proof/proof-ozon-quarter.jpg" alt="Ozon Seller 后台截图：一个季度的日度下单额曲线" data-i18n-attr="alt:proof.alt.proof-ozon-quarter"><span class="shot__stamp" data-i18n="proof.stamp">原始截图</span></a><figcaption data-i18n="proof.cap.proof-ozon-quarter">Ozon Seller 季度日度走势（6 月 8 日 – 9 月 7 日）：8 月 24 日 1,857,680 卢布</figcaption></figure>
+            <figure class="shot" data-shot="proof-wb-steady"><a class="shot__zoom" href="assets/proof/proof-wb-steady.jpg" target="_blank" rel="noopener"><img src="assets/proof/proof-wb-steady.jpg" alt="Wildberries 卖家后台截图：日结算额自低位起步后稳定在约 30 万–40 万卢布" data-i18n-attr="alt:proof.alt.proof-wb-steady"><span class="shot__stamp" data-i18n="proof.stamp">原始截图</span></a><figcaption data-i18n="proof.cap.proof-wb-steady">Wildberries 后台「商品货款结算」：自低位起步，稳定在每日约 30 万–40 万卢布，标注当日 428,640 卢布</figcaption></figure>
+            <figure class="shot" data-shot="proof-share"><a class="shot__zoom" href="assets/proof/proof-share.jpg" target="_blank" rel="noopener"><img src="assets/proof/proof-share.jpg" alt="卖家后台截图：类目份额与搜索排位" data-i18n-attr="alt:proof.alt.proof-share"><span class="shot__stamp" data-i18n="proof.stamp">原始截图</span></a><figcaption data-i18n="proof.cap.proof-share">类目份额与搜索排位</figcaption></figure>
+            <figure class="shot" data-shot="proof-rating"><a class="shot__zoom" href="assets/proof/proof-rating.jpg" target="_blank" rel="noopener"><img src="assets/proof/proof-rating.jpg" alt="卖家后台截图：商品评分与评价" data-i18n-attr="alt:proof.alt.proof-rating"><span class="shot__stamp" data-i18n="proof.stamp">原始截图</span></a><figcaption data-i18n="proof.cap.proof-rating">商品评分与买家评价</figcaption></figure>
+          </div>
+        </div>
+        <div class="real-group real-group--docs" data-real-group hidden>
+          <figure class="real" data-real="warehouse"><img src="assets/real/warehouse.jpg" alt="照片：我方仓库的货架、托盘与待发货物" data-i18n-attr="alt:real.alt.warehouse"><figcaption data-i18n="real.cap.warehouse">我方在俄罗斯的仓库：货架与托盘存储，待发货物</figcaption></figure>
+          <figure class="real" data-real="legal"><img src="assets/real/legal.jpg" alt="俄罗斯法人注册与报税文件的照片" data-i18n-attr="alt:real.alt.legal"><figcaption data-i18n="real.cap.legal">俄罗斯法人主体与正式报税文件——文件上的登记号、金额与签章已做遮挡</figcaption></figure>
+          <figure class="real" data-real="report"><img src="assets/real/report.jpg" alt="每周报表示例的截图" data-i18n-attr="alt:real.alt.report"><figcaption data-i18n="real.cap.report">每周报表示例（已做脱敏）：销量与销售额、库存、广告、评价、待结算款项</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Спецификация условий: четыре формата одной таблицей, как идут деньги -->
+    <section class="sheet sheet--pink" id="terms" aria-labelledby="terms-h">
+      <div class="sheet__inner">
+        <h2 class="sheet__h" id="terms-h" data-i18n="terms.h">四种合作形式</h2>
+        <p class="sheet__lead" data-i18n="terms.lead">大多数合作从小批量试销开始，随数据与信任逐级升级。每种形式约定三件事：货物归属、法人主体与我方收益；具体金额与比例在商务洽谈中确定。</p>
+        <!-- Строки «описание / чей товар / чьё юрлицо / как зарабатываем» выровнены между колонками (subgrid) -->
+        <div class="formats">
+          <article class="fmt">
+            <div class="fmt__head">
+              <figure class="photo fmt__img" data-slot="fmt-pilot" data-i18n-attr="data-label:photo.missing" data-label="照片位 · 请将文件放至："><img src="assets/photos/fmt-pilot.jpg" alt="托盘上的小批量样品箱" width="800" height="1200" loading="lazy" data-i18n-attr="alt:photo.alt.fmt-pilot" onerror="this.closest('.photo').classList.add('photo--missing')"></figure>
+              <p class="fmt__no">1 <span class="fmt__tag" data-i18n="terms.start">通常从这里开始</span></p>
+              <h3 data-i18n="fmt.f1n">试销</h3>
+            </div>
+            <p class="fmt__desc" data-i18n="fmt.f1d">以小批量产品试销验证市场：先以数据说话，再谈规模。</p>
+            <dl class="fmt__facts">
+              <dt data-i18n="fmt.goodsLabel">货物归属</dt><dd data-i18n="fmt.f1g">贵司产品，试销批次</dd>
+              <dt data-i18n="fmt.entityLabel">法人主体</dt><dd data-i18n="fmt.f1e">视情况而定：贵司或我方，以更快启动为准</dd>
+              <dt data-i18n="fmt.moneyLabel">我方收益</dt><dd data-i18n="fmt.f1m">月度运营服务费 + 销售分成</dd>
+            </dl>
+          </article>
+          <article class="fmt">
+            <div class="fmt__head">
+              <figure class="photo fmt__img" data-slot="fmt-operator" data-i18n-attr="data-label:photo.missing" data-label="照片位 · 请将文件放至："><img src="assets/photos/fmt-operator.jpg" alt="显示销售报表的笔记本电脑" width="800" height="1200" loading="lazy" data-i18n-attr="alt:photo.alt.fmt-operator" onerror="this.closest('.photo').classList.add('photo--missing')"></figure>
+              <p class="fmt__no">2</p>
+              <h3 data-i18n="fmt.f2n">代运营</h3>
+            </div>
+            <p class="fmt__desc" data-i18n="fmt.f2d">贵司主体入驻平台，全托管代运营（定价由贵司确认）。</p>
+            <dl class="fmt__facts">
+              <dt data-i18n="fmt.goodsLabel">货物归属</dt><dd data-i18n="fmt.f2g">贵司产品</dd>
+              <dt data-i18n="fmt.entityLabel">法人主体</dt><dd data-i18n="fmt.f2e">贵司中国法人</dd>
+              <dt data-i18n="fmt.moneyLabel">我方收益</dt><dd data-i18n="fmt.f2m">月度运营服务费 + 销售分成</dd>
+            </dl>
+          </article>
+          <article class="fmt">
+            <div class="fmt__head">
+              <figure class="photo fmt__img" data-slot="fmt-distribution" data-i18n-attr="data-label:photo.missing" data-label="照片位 · 请将文件放至："><img src="assets/photos/fmt-distribution.jpg" alt="我方仓库：托盘上的货箱" width="387" height="516" loading="lazy" data-i18n-attr="alt:photo.alt.fmt-distribution" onerror="this.closest('.photo').classList.add('photo--missing')"></figure>
+              <p class="fmt__no">3</p>
+              <h3 data-i18n="fmt.f3n">分销合作</h3>
+            </div>
+            <p class="fmt__desc" data-i18n="fmt.f3d">我方按经销价采购贵司产品，自行承担库存与销售风险。</p>
+            <dl class="fmt__facts">
+              <dt data-i18n="fmt.goodsLabel">货物归属</dt><dd data-i18n="fmt.f3g">我方买断</dd>
+              <dt data-i18n="fmt.entityLabel">法人主体</dt><dd data-i18n="fmt.f3e">我方俄罗斯法人</dd>
+              <dt data-i18n="fmt.moneyLabel">我方收益</dt><dd data-i18n="fmt.f3m">按经销价买断，货款按合同节点支付；我方收益为经销差价</dd>
+            </dl>
+          </article>
+          <article class="fmt fmt--flagship">
+            <div class="fmt__head">
+              <figure class="photo fmt__img" data-slot="fmt-jv" data-i18n-attr="data-label:photo.missing" data-label="照片位 · 请将文件放至："><img src="assets/photos/fmt-jv.jpg" alt="握手特写、合同与印章" width="800" height="1200" loading="lazy" data-i18n-attr="alt:photo.alt.fmt-jv" onerror="this.closest('.photo').classList.add('photo--missing')"></figure>
+              <p class="fmt__no">4 <span class="fmt__tag fmt__tag--stamp" data-i18n="fmt.f4badge">旗舰方案</span></p>
+              <h3 data-i18n="fmt.f4n">联合生产</h3>
+            </div>
+            <p class="fmt__desc" data-i18n="fmt.f4d">我方按经销价买断贵司产品，以自有法人主体与面向俄罗斯市场的品牌负责全部销售与运营。</p>
+            <dl class="fmt__facts">
+              <dt data-i18n="fmt.goodsLabel">货物归属</dt><dd data-i18n="fmt.f4g">我方买断；达到约定销量后任俄罗斯市场总代理（独家经销）</dd>
+              <dt data-i18n="fmt.entityLabel">法人主体</dt><dd data-i18n="fmt.f4e">我方法人；品牌面向俄罗斯市场（我方或联合品牌）</dd>
+              <dt data-i18n="fmt.moneyLabel">我方收益</dt><dd data-i18n="fmt.f4m">按经销价买断，货款按合同节点支付；我方收益为经销差价</dd>
+            </dl>
+          </article>
+        </div>
+        <div class="box pay">
+          <h3 class="box__h" data-i18n="terms.payH">货款如何流转</h3>
+          <dl class="pay__rows">
+            <div><dt data-i18n="terms.pay12t">试销 · 代运营</dt><dd data-i18n="terms.pay12">平台货款归贵司；贵司每月支付运营服务费，并按平台后台的销售额支付销售分成。</dd></div>
+            <div><dt data-i18n="terms.pay34t">分销合作 · 联合生产</dt><dd data-i18n="terms.pay34">我方按经销价买断，货款按合同节点支付（预付款与尾款）；贵司无需支付服务费或分成。</dd></div>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. График запуска: 30 / 60 / 90 -->
+    <section class="sheet sheet--white" id="launch" aria-labelledby="launch-h">
+      <div class="sheet__inner">
+        <h2 class="sheet__h" id="launch-h" data-i18n="launch.h">前 90 天</h2>
+        <ol class="timeline">
+          <li><p class="timeline__day" data-i18n="cap.d30t">第 30 天</p><p data-i18n="cap.d30b">完成市场与竞品分析，确认选品与定价方案；启动认证与强制标识流程；首批商品卡片（文案、SEO、视觉）制作上线。</p></li>
+          <li><p class="timeline__day" data-i18n="cap.d60t">第 60 天</p><p data-i18n="cap.d60b">商品批量上架，货品进入 Wildberries / Ozon 仓储物流体系；广告投放启动，首批真实订单产生。</p></li>
+          <li><p class="timeline__day" data-i18n="cap.d90t">第 90 天</p><p data-i18n="cap.d90b">首批 SKU 稳定出单，广告持续优化，每周报表正常运转；此后按数据扩大品类，最多同时运营 1000 个 SKU。</p></li>
+        </ol>
+        <p class="note" data-i18n="launch.note">实际进度取决于类目的认证要求与样品到达时间。</p>
+      </div>
+    </section>
+
+    <!-- 7. Вопросы: шесть главных, остальные под «Ещё вопросы». Нативный details — без JS -->
+    <section class="sheet sheet--white" id="faq" aria-labelledby="faq-h">
+      <div class="sheet__inner">
+        <h2 class="sheet__h" id="faq-h" data-i18n="faq.h">常见问题</h2>
+        <div class="qa">
+          <details><summary data-i18n="faq.q9">付款方式与预付比例如何安排？</summary><p data-i18n="faq.a9">按阶段结算：预付款、发货前尾款（或到货后）各节点的比例在合同中约定，随合作形式而定，具体方案在商务谈判中确定。</p></details>
+          <details><summary data-i18n="faq.q1">如何结算？使用何种货币？</summary><p data-i18n="faq.a1">结算币种与付款节点在合同中约定，随合作形式而定。分销与联合生产形式下，我方买断产品并按合同节点付款；试销与代运营形式下，平台货款直接归贵司或按合同结算，我方收取月度运营服务费与销售分成。具体方案在商务谈判中确定。</p></details>
+          <details><summary data-i18n="faq.q2">物流与认证费用由谁承担？</summary><p data-i18n="faq.a2">分销与联合生产形式下，产品由我方买断，认证、物流与广告费用由我方承担。试销与代运营形式下，费用分担方式在合同中约定，具体比例在商务谈判中确定。</p></details>
+          <details><summary data-i18n="faq.q6">多久能产生首批销售？</summary><p data-i18n="faq.a6">启动计划以 90 天为周期：市场分析与认证、上架与入仓、广告与首批订单。实际进度取决于类目的认证要求与样品到达时间，我方每周向贵司通报进展。</p></details>
+          <details><summary data-i18n="faq.q7">如何沟通？</summary><p data-i18n="faq.a7">谈判以中文进行（配翻译），微信沟通使用中文，合同为中俄双语。每周发送销售报表，每月进行经营复盘；重要事项书面确认。</p></details>
+          <details><summary data-i18n="faq.q11">独家代理的条件是什么？</summary><p data-i18n="faq.a11">类目独家代理权在达到约定销量后授予，并与 KPI 挂钩：约定的销售目标、期限与续约条件写入合同。</p></details>
+          <details class="qa__more">
+            <summary data-i18n="faq.more">更多问题</summary>
+            <div class="qa">
+              <details><summary data-i18n="faq.q8">如果产品卖不动怎么办？</summary><p data-i18n="faq.a8">首先，我方收益与销售额挂钩，产品滞销对我方同样是损失。其次，启动前我方完成市场分析与销量预测，并从小批量试销开始。若数据不达预期，双方按合同约定调整定价、内容或品类，或终止合作；分销与联合生产形式下，库存风险由我方承担。</p></details>
+              <details><summary data-i18n="faq.q3">退货与残次品如何处理？</summary><p data-i18n="faq.a3">退货是俄罗斯电商的常规环节，由我方团队处理：可售退货重新上架，运输与包装损耗按合同约定处理。因产品质量导致的批次性问题，由双方按合同约定分担，并共同改进产品。</p></details>
+              <details><summary data-i18n="faq.q4">商标归谁所有？</summary><p data-i18n="faq.a4">贵司现有商标始终归贵司所有。面向俄罗斯市场新建的品牌，其归属（我方或联合）与使用范围在合同中约定，并在俄罗斯专利局注册，以防第三方抢注。</p></details>
+              <details><summary data-i18n="faq.q5">是否有最低订购量？</summary><p data-i18n="faq.a5">没有固定门槛。试销形式本身即以小批量验证市场，批量随数据逐级放大。最多可同时运营 1000 个 SKU 是我方的能力上限，而非起点要求。</p></details>
+              <details><summary data-i18n="faq.q10">采用何种贸易术语？</summary><p data-i18n="faq.a10">通常采用 FOB 或 EXW，可根据贵司习惯协商；俄方物流与清关由我方安排。</p></details>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. Ответный бланк: встреча или видеозвонок через WeChat; прайс на расчёт — вторым -->
+    <section class="sheet sheet--blue" id="contacts" aria-labelledby="contacts-h">
+      <div class="sheet__inner">
+        <h2 class="sheet__h" id="contacts-h" data-i18n="contacts.h">预约会面或视频通话</h2>
+        <p class="sheet__lead" data-i18n="contacts.lead">在微信中告诉我们：贵司名称、主要品类，以及希望在展会见面还是视频通话。</p>
+        <div class="reply">
+          <div class="reply__fields">
+            <div class="field">
+              <p class="field__label" data-i18n="contacts.wechatLabel">微信 WeChat</p>
+              <div class="wechat">
+                <!-- Главное действие — открыть приглашение; адрес ниже копируемый и второстепенный.
+                     href обеим ссылкам ставит initContactLinks из config.wechat -->
+                <a class="stamp" data-contact-link="invite" target="_blank" rel="noopener" data-i18n="contacts.open">在微信中添加</a>
+                <a class="wechat__url" id="wechat-value" data-contact-link="invite" data-config="wechat" target="_blank" rel="noopener">https://u.wechat.com/kEQrEUI3xUqrK8LPSZnPCCs?s=4</a>
+                <button type="button" class="copy" data-copy="wechat-value">
+                  <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><rect x="9" y="9" width="11" height="12" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M5 15V5a2 2 0 0 1 2-2h8" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+                  <span data-copy-label data-i18n="contacts.copy">复制</span>
+                </button>
+              </div>
+              <p class="field__note" data-i18n="contacts.wechatNote">链接为微信邀请，手机端可在微信中打开；二维码为同一地址。</p>
+            </div>
+            <div class="field">
+              <p class="field__label" data-i18n="contacts.priceH">也可以先发资料</p>
+              <p class="field__value" data-i18n="contacts.price">直接发送报价单与主推型号，我们测算其在俄罗斯的单品利润。</p>
+            </div>
+            <div class="field">
+              <p class="field__label" data-i18n="contacts.langH">沟通语言</p>
+              <p class="field__value" data-i18n="contacts.lang">中文沟通（配翻译），合同中俄双语。</p>
+            </div>
+            <div class="field">
+              <p class="field__label" data-i18n="contacts.legalH">公司信息</p>
+              <p class="field__value" data-i18n="contacts.legal">公司注册信息在会面时及合同中提供。</p>
+            </div>
+          </div>
+          <figure class="qr">
+            <img src="assets/wechat-qr.png" width="220" height="220" alt="微信二维码" data-i18n-attr="alt:contacts.qrAlt">
+            <figcaption data-i18n="contacts.qrCaption">扫描二维码，在微信中打开邀请</figcaption>
+            <p class="qr__note" data-i18n="contacts.qrNote">手机长按二维码识别，电脑端请用微信扫码</p>
+          </figure>
+        </div>
+        <!-- Настоящая выставка: появится, когда собственник положит файл -->
+        <div class="real-group real-group--wide" data-real-group hidden>
+          <figure class="real" data-real="expo"><img src="assets/real/expo.jpg" alt="照片：行业展会上的我方展位" data-i18n-attr="alt:real.alt.expo"><figcaption data-i18n="real.cap.expo">我们在行业展会的展位——我们正是在这里与生产企业见面</figcaption></figure>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Липкий призыв на ≤768px: прячет initStickyCta(), пока виден первый экран или ответный бланк -->
+  <a class="sticky-cta" href="#contacts" data-sticky-cta>
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M21 11.5a7.5 7.5 0 0 1-7.5 7.5H8l-4.5 3 1.3-4.4A7.5 7.5 0 1 1 21 11.5z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+    <span data-i18n="cta.sticky">预约会面 · 微信</span>
+  </a>
+
+  <footer class="foot">
+    <div class="foot__inner">
+      <span data-config="brandFull">EastBridge · 东桥</span>
+      <span>© <span id="year">2026</span> <span data-i18n="footer.rights">保留所有权利。</span></span>
+    </div>
+  </footer>
+
+  <script src="content.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
